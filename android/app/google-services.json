@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "236301618251",
+    "project_id": "greatlyshopapp-f0b87",
+    "storage_bucket": "greatlyshopapp-f0b87.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:236301618251:android:552de583971065c6cf11ce",
+        "android_client_info": {
+          "package_name": "com.example.greatly_user"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6F0x_3_Xxqa4vHPsu1010PTfcpPhR0rw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,26 @@
+// filepath: /Users/admin/development/projects/greatly_user/.vscode/launch.json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "greatly_user",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/bootstrap.dart" // Specify the new entry point
+        },
+        {
+            "name": "greatly_user (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "program": "lib/bootstrap.dart" // Specify the new entry point
+        },
+        {
+            "name": "greatly_user (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "program": "lib/bootstrap.dart" // Specify the new entry point
+        }
+    ]
+}
