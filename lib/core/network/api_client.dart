@@ -2,20 +2,21 @@ import 'package:dio/dio.dart';
 import 'interceptors/auth_interceptor.dart';
 import 'interceptors/error_interceptor.dart';
 
+/// Handles API requests for the app.
 class ApiClient {
-  final Dio _dio;
+  final Dio _dio;  // Dio is used to make HTTP requests.
 
   ApiClient()
       : _dio = Dio(BaseOptions(
-          baseUrl: "https://api.yourmedusaapi.com",
-          connectTimeout: Duration(milliseconds: 5000),
-          receiveTimeout: Duration(milliseconds: 3000),
+          baseUrl: "https://api.yourmedusaapi.com",  // Base API URL.
+          connectTimeout: Duration(milliseconds: 5000),  // Wait 5 seconds before timeout.
+          receiveTimeout: Duration(milliseconds: 3000),  // Wait 3 seconds for a response.
         )) {
-    _dio.interceptors.add(AuthInterceptor());
-    _dio.interceptors.add(ErrorInterceptor());
+    _dio.interceptors.add(AuthInterceptor());  // Adds authentication handling.
+    _dio.interceptors.add(ErrorInterceptor());  // Handles errors automatically.
   }
 
-  // Example of a GET request
+  /// Makes a GET request to the given endpoint.
   Future<Response> getData(String endpoint) async {
     return await _dio.get(endpoint);
   }

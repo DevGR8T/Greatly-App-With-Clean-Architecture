@@ -12,7 +12,20 @@
           "package_name": "com.example.greatly_user"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "236301618251-761n3cnfkbimfn5aj1doqch450q6gvt2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.greatly_user",
+            "certificate_hash": "92d7d322874af7e296b85853e708f9c2f6a84af1"
+          }
+        },
+        {
+          "client_id": "236301618251-kn9c678el9q5v35eefidp8d1qisbu64m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD6F0x_3_Xxqa4vHPsu1010PTfcpPhR0rw"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "236301618251-kn9c678el9q5v35eefidp8d1qisbu64m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "236301618251-p4u9psqti1t6kbab0jmil6m57lmst9ih.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.greatlyUser"
+              }
+            }
+          ]
         }
       }
     }

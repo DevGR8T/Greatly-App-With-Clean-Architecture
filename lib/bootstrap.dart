@@ -12,6 +12,9 @@ Future<void> main() async {
     );
     print('Firebase initialized successfully');
     configureDependencies();
+    registerRepositories();
+    registerUseCases();
+    registerBlocs();
     runApp( MyApp());
   } catch (e) {
     print('Error initializing Firebase: $e');

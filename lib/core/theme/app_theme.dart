@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
 
@@ -6,6 +7,8 @@ ThemeData appTheme() {
   return ThemeData(
     primaryColor: AppColors.primary,
     scaffoldBackgroundColor: AppColors.background,
+    // Replace fontFamily with Google Fonts
+    textTheme: GoogleFonts.aBeeZeeTextTheme(appTextTheme()), // Use Google Fonts
     colorScheme: ColorScheme.light(
       primary: AppColors.primary,
       secondary: AppColors.secondary,
@@ -14,18 +17,21 @@ ThemeData appTheme() {
       onSecondary: AppColors.onSecondary,
       onSurface: AppColors.onSurface,
     ),
-    textTheme: appTextTheme(),
     appBarTheme: AppBarTheme(
       backgroundColor: AppColors.primary,
       elevation: 0,
       iconTheme: IconThemeData(color: AppColors.onPrimary),
-      titleTextStyle: appTextTheme().titleLarge?.copyWith(color: AppColors.onPrimary),
+      titleTextStyle: GoogleFonts.aBeeZee(
+        textStyle: appTextTheme().titleLarge?.copyWith(color: AppColors.onPrimary),
+      ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
-        textStyle: appTextTheme().labelLarge,
+        textStyle: GoogleFonts.aBeeZee(
+          textStyle: appTextTheme().labelLarge,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     ),
@@ -33,18 +39,19 @@ ThemeData appTheme() {
       filled: true,
       fillColor: AppColors.surface,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(2),
         borderSide: BorderSide(color: AppColors.primary),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: AppColors.primary),
+        borderSide: BorderSide(color: AppColors.surface),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: AppColors.secondary),
+        borderRadius: BorderRadius.circular(2),
+        borderSide: BorderSide(color: AppColors.surface, width: 1.0),
       ),
-      labelStyle: appTextTheme().bodyLarge?.copyWith(color: AppColors.onBackground),
+      labelStyle: GoogleFonts.aBeeZee(
+        textStyle: appTextTheme().bodyLarge?.copyWith(color: AppColors.onBackground),
+      ),
     ),
   );
 }

@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'core/config/routes/routes.dart';
+import 'core/di/service_locator.dart';
 import 'core/theme/app_theme.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: appTheme(),
-      home: Scaffold(
-        appBar: AppBar(title: Text('Greatly User App')),
-        body: Center(child: Text('Hello, world!')),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => getIt<AuthBloc>()), // Single global AuthBloc
+      ],
+      child: MaterialApp(
+        theme: appTheme(),
+        initialRoute: AppRouter.register,
+        onGenerateRoute: AppRouter.onGenerateRoute,
       ),
     );
   }
