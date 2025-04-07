@@ -20,7 +20,10 @@ class AuthRepositoryImpl implements AuthRepository {
     final firebase_auth.User? firebaseUser =
         await _authRemoteDataSource.signInWithEmail(email, password);
     if (firebaseUser == null) {
-      throw Exception('Login failed');
+      throw firebase_auth.FirebaseAuthException(
+        code: 'login-failed',
+        message: 'Login failed. Please check your credentials.',
+      );
     }
     return User(
       id: firebaseUser.uid,
@@ -28,7 +31,7 @@ class AuthRepositoryImpl implements AuthRepository {
       username: firebaseUser.displayName,
       phone: firebaseUser.phoneNumber,
       isNewUser: false,
-      emailVerified: firebaseUser.emailVerified, // Add the required argument
+      emailVerified: firebaseUser.emailVerified, 
     );
   }
 
@@ -39,7 +42,10 @@ class AuthRepositoryImpl implements AuthRepository {
     final firebase_auth.User? firebaseUser =
         await _authRemoteDataSource.registerWithEmail(email, password);
     if (firebaseUser == null) {
-      throw Exception('Registration failed');
+      throw firebase_auth.FirebaseAuthException(
+        code: 'registration-failed',
+        message: 'Registration failed. Please try again.',
+      );
     }
     await _authFirestoreDataSource.storeUserDetails(
       firebaseUser,
@@ -66,7 +72,10 @@ class AuthRepositoryImpl implements AuthRepository {
     final firebase_auth.User? firebaseUser =
         await _authRemoteDataSource.signInWithGoogle();
     if (firebaseUser == null) {
-      throw Exception('Google login failed');
+      throw firebase_auth.FirebaseAuthException(
+        code: 'google-login-failed',
+        message: 'Google login failed. Please try again.',
+      );
     }
     return User(
       id: firebaseUser.uid,
@@ -74,7 +83,7 @@ class AuthRepositoryImpl implements AuthRepository {
       username: firebaseUser.displayName,
       phone: firebaseUser.phoneNumber,
       isNewUser: false,
-      emailVerified: firebaseUser.emailVerified, // Add the required argument
+      emailVerified: firebaseUser.emailVerified, 
     );
   }
 
@@ -84,7 +93,10 @@ class AuthRepositoryImpl implements AuthRepository {
     final firebase_auth.User? firebaseUser =
         await _authRemoteDataSource.signInWithApple();
     if (firebaseUser == null) {
-      throw Exception('Apple login failed');
+      throw firebase_auth.FirebaseAuthException(
+        code: 'apple-login-failed',
+        message: 'Apple login failed. Please try again.',
+      );
     }
     return User(
       id: firebaseUser.uid,

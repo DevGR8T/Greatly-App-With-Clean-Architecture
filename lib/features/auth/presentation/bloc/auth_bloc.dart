@@ -146,7 +146,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onSignOut(SignOut event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      await authService.logout();
+      await authService.logout();  
       emit(AuthInitial());
     } catch (e) {
       _logError('_onSignOut', e);

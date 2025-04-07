@@ -20,7 +20,7 @@ class Strings {
   static const String emailLabel = 'Email';
   static const String passwordLabel = 'Password';
 
-  // Error Messages ofr textfield
+  // Error Messages of textfield
   static const String emailRequired = 'Email is required';
   static const String invalidEmail = 'Enter a valid email';
   static const String passwordRequired = 'Password is required';
@@ -41,4 +41,5 @@ class Strings {
   static const String homeRoute = '/home';
   static const String loginRoute = '/login';
   static const String passwordResetRoute = '/password-reset';
+  static const String splashRoute = '/splash';  
 }

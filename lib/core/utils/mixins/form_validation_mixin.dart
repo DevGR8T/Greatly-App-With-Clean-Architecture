@@ -1,14 +1,17 @@
+import '../../constants/validation_strings.dart';
+
+
 /// A mixin that provides common form validation methods.
 mixin FormValidationMixin {
   /// Validates an email address.
   /// Returns an error message if the email is invalid or null, otherwise null.
   String? validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Email is required';
+      return ValidationStrings.emailRequired;
     }
-    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    final emailRegex = RegExp(ValidationPatterns.emailRegex);
     if (!emailRegex.hasMatch(value.trim())) {
-      return 'Enter a valid email';
+      return ValidationStrings.invalidEmail;
     }
     return null;
   }
@@ -17,10 +20,10 @@ mixin FormValidationMixin {
   /// Returns an error message if the password is invalid or null, otherwise null.
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return ValidationStrings.passwordRequired;
     }
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
+    if (value.length < ValidationRules.minPasswordLength) {
+      return ValidationStrings.passwordTooShort;
     }
     return null;
   }
@@ -29,10 +32,10 @@ mixin FormValidationMixin {
   /// Returns an error message if the username is invalid or null, otherwise null.
   String? validateUsername(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Username is required';
+      return ValidationStrings.usernameRequired;
     }
-    if (value.trim().length < 3) {
-      return 'Username must be at least 3 characters';
+    if (value.trim().length < ValidationRules.minUsernameLength) {
+      return ValidationStrings.usernameTooShort;
     }
     return null;
   }
@@ -41,10 +44,10 @@ mixin FormValidationMixin {
   /// Returns an error message if the phone number is invalid or null, otherwise null.
   String? validatePhoneNumber(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Phone number is required';
+      return ValidationStrings.phoneNumberRequired;
     }
-    if (!RegExp(r'^\d{10,15}$').hasMatch(value)) {
-      return 'Enter a valid phone number';
+    if (!RegExp(ValidationPatterns.phoneRegex).hasMatch(value)) {
+      return ValidationStrings.invalidPhoneNumber;
     }
     return null;
   }

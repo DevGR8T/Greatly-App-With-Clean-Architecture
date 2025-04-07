@@ -18,7 +18,9 @@ import 'package:greatly_user/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../features/auth/domain/usecases/auth_service.dart';
 import '../../features/auth/domain/usecases/check_email_verfication_status_usecase.dart';
+import '../../features/auth/domain/usecases/get_current_user_usecase.dart';
 import '../../features/auth/domain/usecases/register_with_email_usecase.dart';
+import '../../features/auth/presentation/bloc/splash_bloc.dart';
 import 'service_locator.config.dart';
 
 /// Global instance of GetIt for dependency injection
@@ -55,6 +57,7 @@ void registerUseCases() {
   getIt.registerFactory(() => SendPasswordResetEmailUseCase(getIt<AuthRepository>()));
   getIt.registerFactory(() => SendEmailVerificationUseCase(getIt<AuthRepository>()));
   getIt.registerFactory(() => CheckEmailVerificationStatusUseCase(getIt<AuthRepository>()));
+  getIt.registerFactory(() => GetCurrentUserUseCase(getIt<AuthRepository>()));
 
   // Register AuthService
   getIt.registerFactory(() => AuthService(
@@ -68,6 +71,7 @@ void registerUseCases() {
         sendPasswordResetEmailUseCase: getIt<SendPasswordResetEmailUseCase>(),
         sendEmailVerificationUseCase: getIt<SendEmailVerificationUseCase>(),
         checkEmailVerificationStatusUseCase: getIt<CheckEmailVerificationStatusUseCase>(),
+        getCurrentUserUseCase: getIt<GetCurrentUserUseCase>(), 
       ));
 }
 
@@ -76,4 +80,5 @@ void registerBlocs() {
   getIt.registerFactory<AuthBloc>(() => AuthBloc(
         authService: getIt<AuthService>(), // Use AuthService
       ));
+  getIt.registerFactory(() => SplashBloc(getIt()));
 }

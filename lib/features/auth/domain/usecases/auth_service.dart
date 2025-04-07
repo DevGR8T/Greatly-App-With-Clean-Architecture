@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:greatly_user/core/error/failure.dart';
 import '../entities/user.dart';
 import 'check_email_verfication_status_usecase.dart';
+import 'get_current_user_usecase.dart';
 import 'logout_usecase.dart';
 import 'login_with_email_usecase.dart';
 import 'register_with_email_usecase.dart';
@@ -23,6 +24,7 @@ class AuthService {
   final SendPasswordResetEmailUseCase sendPasswordResetEmailUseCase;
   final SendEmailVerificationUseCase sendEmailVerificationUseCase;
   final CheckEmailVerificationStatusUseCase checkEmailVerificationStatusUseCase;
+  final GetCurrentUserUseCase getCurrentUserUseCase;
 
   AuthService({
     required this.loginWithEmailUseCase,
@@ -35,6 +37,7 @@ class AuthService {
     required this.sendPasswordResetEmailUseCase,
     required this.sendEmailVerificationUseCase,
     required this.checkEmailVerificationStatusUseCase,
+     required this.getCurrentUserUseCase,
   });
 
   Future<Either<Failure, User>> loginWithEmail(String email, String password) {
@@ -77,5 +80,9 @@ class AuthService {
 
   Future<Either<Failure, bool>> checkEmailVerificationStatus() {
     return checkEmailVerificationStatusUseCase();
+  }
+
+  Future<Either<Failure, User?>> getCurrentUser() {
+    return getCurrentUserUseCase(); 
   }
 }

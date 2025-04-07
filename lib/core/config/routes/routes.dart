@@ -3,18 +3,24 @@ import 'package:greatly_user/features/auth/presentation/pages/login_page.dart';
 import '../../../features/auth/presentation/pages/homepage.dart';
 import '../../../features/auth/presentation/pages/password_reset_page.dart';
 import '../../../features/auth/presentation/pages/register_page.dart';
+import '../../../features/auth/presentation/pages/splash_page.dart';
 
 /// AppRouter manages all the routes in the application.
 class AppRouter {
   // Route names for navigation
+   static const String splash = '/splash'; // Add splash route
   static const String login = '/'; // Default route for the login page
   static const String register = '/register'; // Route for the registration page
   static const String home = '/home'; // Route for the home page
   static const String passwordReset = '/password-reset'; // Route for the forgot password page
 
+
   /// Generates routes based on the route name.
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
+      //Navigate to the splash page 
+      case splash:
+        return MaterialPageRoute(builder: (_) => const SplashPage());
       case login:
         // Navigate to the LoginPage
         return MaterialPageRoute(builder: (_) => LoginPage());
