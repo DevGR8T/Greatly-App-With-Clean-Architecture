@@ -16,6 +16,8 @@ class Strings {
   static const String emailVerificationResent = 'Verification email resent!';
   static const String dialogTitle = '📩 Email Verification Sent';
   static String dialogtext(String email) => 'We\'ve sent a verification email to $email. Click the link in the email to verify your account.';
+
+
   // Labels
   static const String emailLabel = 'Email';
   static const String passwordLabel = 'Password';
@@ -25,7 +27,18 @@ class Strings {
   static const String invalidEmail = 'Enter a valid email';
   static const String passwordRequired = 'Password is required';
   static const String passwordTooShort = 'Password must be at least 6 characters';
- 
+
+    // Onboarding
+  static const String skip = 'Skip';
+  static const String next = 'Next';
+  static const String getStarted = 'Get Started';
+  static const String onboardingTitle1 = 'Welcome to Greatly Store';
+  static const String onboardingDescription1 = 'Discover the best products at unbeatable prices.';
+  static const String onboardingTitle2 = 'Fast Delivery';
+  static const String onboardingDescription2 = 'Get your orders delivered to your doorstep quickly.';
+  static const String onboardingTitle3 = 'Fast and Secure Payments';
+  static const String onboardingDescription3 = 'Pay for the product you buy safely and easily';
+  static const String onboardingError = 'Failed to load onboarding items. Please try again.';
 
 
 // Forgot Password
@@ -42,4 +55,5 @@ class Strings {
   static const String loginRoute = '/login';
   static const String passwordResetRoute = '/password-reset';
   static const String splashRoute = '/splash';  
+  static const String onboardingRoute = '/onboarding';
 }

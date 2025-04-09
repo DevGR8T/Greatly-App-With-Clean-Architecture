@@ -15,7 +15,14 @@ import 'package:greatly_user/features/auth/data/datasources/remote/auth_remote_d
 import 'package:greatly_user/features/auth/data/datasources/remote/auth_firestore_data_source.dart';
 import 'package:greatly_user/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:greatly_user/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:greatly_user/features/onboarding/data/datasources/local/onboarding_local_data_source.dart';
+import 'package:greatly_user/features/onboarding/data/repositories/onboarding_repository_impl.dart';
+import 'package:greatly_user/features/onboarding/domain/repositories/onboarding_repository.dart';
+import 'package:greatly_user/features/onboarding/domain/usecases/get_onboarding_items_usecase.dart';
+import 'package:greatly_user/features/onboarding/domain/usecases/set_onboarding_completed_usecase.dart';
+import 'package:greatly_user/features/onboarding/presentation/bloc/onboarding_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/auth/domain/usecases/auth_service.dart';
 import '../../features/auth/domain/usecases/check_email_verfication_status_usecase.dart';
 import '../../features/auth/domain/usecases/get_current_user_usecase.dart';
@@ -26,12 +33,29 @@ import 'service_locator.config.dart';
 /// Global instance of GetIt for dependency injection
 final GetIt getIt = GetIt.instance;
 
+/// Main initialization function to be called at app startup
+Future<void> initDependencies() async {
+  // First call configureDependencies for injectable
+  configureDependencies();
+  
+  // Then register repositories (which contains async code)
+  await registerRepositories();
+  
+  // Finally register use cases and blocs
+  registerUseCases();
+  registerBlocs();
+}
+
 /// Initializes dependencies using Injectable
 @InjectableInit()
 void configureDependencies() => getIt.init();
 
 /// Registers repositories and their dependencies
-void registerRepositories() {
+Future<void> registerRepositories() async {
+  // Register SharedPreferences
+  final sharedPreferences = await SharedPreferences.getInstance();
+  getIt.registerSingleton<SharedPreferences>(sharedPreferences);
+
   // Register Data Sources
   getIt.registerFactory<AuthRemoteDataSource>(
       () => AuthRemoteDataSource(FirebaseAuth.instance, GoogleSignIn()));
@@ -43,6 +67,12 @@ void registerRepositories() {
         getIt<AuthRemoteDataSource>(),
         getIt<AuthFirestoreDataSource>(),
       ));
+
+  // Onboarding Feature
+  getIt.registerFactory<OnboardingLocalDataSource>(
+      () => OnboardingLocalDataSource(getIt<SharedPreferences>()));
+  getIt.registerFactory<OnboardingRepository>(
+      () => OnboardingRepositoryImpl(getIt<OnboardingLocalDataSource>()));
 }
 
 /// Registers use cases for dependency injection
@@ -59,7 +89,11 @@ void registerUseCases() {
   getIt.registerFactory(() => CheckEmailVerificationStatusUseCase(getIt<AuthRepository>()));
   getIt.registerFactory(() => GetCurrentUserUseCase(getIt<AuthRepository>()));
 
-  // Register AuthService
+  // Onboarding Use Cases
+  getIt.registerFactory(() => GetOnboardingItemsUseCase(getIt<OnboardingRepository>()));
+  getIt.registerFactory(() => SetOnboardingCompletedUseCase(getIt<OnboardingRepository>()));
+
+  // Register AuthService usecases for dependency injection
   getIt.registerFactory(() => AuthService(
         loginWithEmailUseCase: getIt<LoginWithEmailUseCase>(),
         registerWithEmailUseCase: getIt<RegisterWithEmailUseCase>(),
@@ -80,5 +114,12 @@ void registerBlocs() {
   getIt.registerFactory<AuthBloc>(() => AuthBloc(
         authService: getIt<AuthService>(), // Use AuthService
       ));
+      //splash bloc
   getIt.registerFactory(() => SplashBloc(getIt()));
+
+  // Onboarding Bloc
+  getIt.registerFactory(() => OnboardingBloc(
+        getOnboardingItemsUseCase: getIt<GetOnboardingItemsUseCase>(),
+        setOnboardingCompletedUseCase: getIt<SetOnboardingCompletedUseCase>(),
+      ));
 }

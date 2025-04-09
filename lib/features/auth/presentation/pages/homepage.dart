@@ -5,8 +5,14 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('HomePage'),
+    return PopScope(
+      canPop: false, // Disables back button
+      child: Scaffold(
+        appBar: AppBar(title: const Text('HomePage'),automaticallyImplyLeading: false,),
+        body: const Center(
+          child: Text('HomePage'),
+        ),
+      ),
     );
   }
 }

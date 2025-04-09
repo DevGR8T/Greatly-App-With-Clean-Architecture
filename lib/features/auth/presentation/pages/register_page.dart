@@ -35,7 +35,8 @@ class RegisterPage extends StatelessWidget with SnackBarMixin {
                 Strings.welcomeAccountCreated,
                 Colors.green,
               );
-
+              // Trigger email verification
+           context.read<AuthBloc>().add(SendEmailVerification());
               // Show email verification dialog
               showDialog(
                 context: context,

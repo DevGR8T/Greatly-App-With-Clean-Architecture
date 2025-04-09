@@ -16,7 +16,7 @@ class GetCurrentUserUseCase {
     try {
       // Fetch the current user from the repository
       final user = await authRepository.getCurrentUser();
-      return Right(user); // ✅ Success
+      return Right(user); // Success
     } catch (e) {
       // Return a failure if an exception occurs
       return Left(ServerFailure('Failed to get current user: ${e.toString()}'));

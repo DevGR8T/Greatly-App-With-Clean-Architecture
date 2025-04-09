@@ -5,6 +5,7 @@ import 'core/di/service_locator.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/splash_bloc.dart';
+import 'features/onboarding/presentation/bloc/onboarding_bloc.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -13,6 +14,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => getIt<AuthBloc>()), // Global AuthBloc
         BlocProvider(create: (context) => getIt<SplashBloc>()), // SplashBloc for SplashPage
+        BlocProvider(create: (context) => getIt<OnboardingBloc>()), // OnboardingBloc for OnboardingPage
       ],
       child: MaterialApp(
         theme: appTheme(),

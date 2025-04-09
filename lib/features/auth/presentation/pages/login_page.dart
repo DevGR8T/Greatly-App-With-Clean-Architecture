@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> with SnackBarMixin {
   /// Navigates to the home screen.
   void _navigateToHome(BuildContext context) {
     Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pushReplacementNamed(context, Strings.homeRoute);
+      Navigator.pushReplacementNamed(context, Strings.onboardingRoute);
     });
   }
 

@@ -1,22 +1,18 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:greatly_user/app.dart';
-import 'package:greatly_user/firebase_options.dart';
-import 'core/di/service_locator.dart';
-// In bootstrap.dart
-Future<void> main() async {
+import 'package:greatly_user/core/di/service_locator.dart';
+import 'package:greatly_user/app.dart'; // Your main app widget
+
+void main() async {
+  // Ensure Flutter binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform
-    );
-    print('Firebase initialized successfully');
-    configureDependencies();
-    registerRepositories();
-    registerUseCases();
-    registerBlocs();
-    runApp( MyApp());
-  } catch (e) {
-    print('Error initializing Firebase: $e');
-  }
+  
+  // Initialize Firebase
+  await Firebase.initializeApp();
+  
+  // Initialize dependencies with proper ordering
+  await initDependencies();
+  
+  // Run the app
+  runApp( MyApp());
 }
