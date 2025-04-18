@@ -57,15 +57,16 @@ class RegisterPage extends StatelessWidget with SnackBarMixin {
                       dismissKeyboard(context);
 
                       // Show snackbar
-                      showSnackBar(
+                       showSnackBar(
                         context,
                         Strings.emailVerificationResent,
                         Colors.blue,
                       );
-
-                      // Trigger the resend event
-                      context.read<AuthBloc>().add(SendEmailVerification());
-
+                    Future.delayed(Duration(seconds: 1),(){
+                   // Trigger the resend event
+                    context.read<AuthBloc>().add(SendEmailVerification());
+                    });
+                      
                       // Delay navigation
                       Future.delayed(const Duration(seconds: 5), () {
                         navigator.pushReplacementNamed(

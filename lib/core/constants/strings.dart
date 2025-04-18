@@ -56,4 +56,9 @@ class Strings {
   static const String passwordResetRoute = '/password-reset';
   static const String splashRoute = '/splash';  
   static const String onboardingRoute = '/onboarding';
+   static const String mainRoute = '/main';
+  // APIs
+  static const String appName = 'greatly';
+  static const String apiBaseUrl = 'http://192.168.43.128:1337/api'; // Fixed Base URL for API requests
+  static const String imageBaseUrl = 'http://192.168.43.128:1337'; // Fixed Base URL for images
 }

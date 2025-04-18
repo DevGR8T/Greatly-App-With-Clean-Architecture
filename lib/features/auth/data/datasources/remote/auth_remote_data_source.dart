@@ -88,24 +88,25 @@ class AuthRemoteDataSource {
   }
 
   /// Registers a new user with Google.
- Future<UserCredential> registerWithGoogle() async {
-  final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-  if (googleUser == null) {
-    throw FirebaseAuthException(
-      code: 'google-sign-in-canceled',
-      message: 'Google sign-in was canceled.',
+  Future<UserCredential> registerWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    if (googleUser == null) {
+      throw FirebaseAuthException(
+        code: 'google-sign-in-canceled',
+        message: 'Google sign-in was canceled.',
+      );
+    }
+
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final OAuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
     );
+
+    // Return the full UserCredential object
+    return await _firebaseAuth.signInWithCredential(credential);
   }
 
-  final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-  final OAuthCredential credential = GoogleAuthProvider.credential(
-    accessToken: googleAuth.accessToken,
-    idToken: googleAuth.idToken,
-  );
-
-  // Return the full UserCredential object
-  return await _firebaseAuth.signInWithCredential(credential);
-}
   /// Signs in with Apple.
   Future<User?> signInWithApple() async {
     final AuthorizationCredentialAppleID appleCredential = await SignInWithApple.getAppleIDCredential(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:greatly_user/core/constants/strings.dart';
 import 'package:greatly_user/core/theme/app_colors.dart';
-import 'package:greatly_user/features/auth/presentation/pages/homepage.dart';
+import '../../../home/presentation/pages/homepage.dart';
 import '../bloc/onboarding_bloc.dart';
 import '../bloc/onboarding_event.dart';
 import '../bloc/onboarding_state.dart';

@@ -63,11 +63,11 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
           if (state is SplashAuthenticated) {
             // Add a delay before navigating
             await Future.delayed(Platform.isIOS ? const Duration(seconds: 6) : const Duration(seconds: 8));
-            Navigator.pushReplacementNamed(context, AppRouter.home);
+            Navigator.pushReplacementNamed(context, AppRouter.main);
           } else if (state is SplashUnauthenticated) {
             // Add a delay before navigating
             await Future.delayed(Platform.isIOS ? const Duration(seconds: 6) : const Duration(seconds: 8));
-            Navigator.pushReplacementNamed(context, AppRouter.login);
+            Navigator.pushReplacementNamed(context, AppRouter.main);
           } else if (state is SplashError) {
             // Handle error (e.g., show a snackbar)
             ScaffoldMessenger.of(context).showSnackBar(
