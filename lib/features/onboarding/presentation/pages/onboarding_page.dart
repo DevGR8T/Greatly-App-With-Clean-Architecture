@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:greatly_user/core/constants/strings.dart';
 import 'package:greatly_user/core/theme/app_colors.dart';
+import 'package:greatly_user/features/main/presentation/pages/main_page.dart';
 import '../../../home/presentation/pages/homepage.dart';
 import '../bloc/onboarding_bloc.dart';
 import '../bloc/onboarding_event.dart';
@@ -34,10 +35,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
     super.dispose();
   }
 
-  void _navigateToHome(BuildContext context) {
+  void _navigateToMainPage(BuildContext context) {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const HomePage(), // Replace with your home page widget
+        pageBuilder: (context, animation, secondaryAnimation) => const MainPage(), // Navigate to the main page
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           const begin = Offset(1.0, 0.0); // Start from the right
           const end = Offset.zero; // End at the current position
@@ -64,7 +65,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           listener: (context, state) {
             // Listen for state changes that require navigation or page controller updates
             if (state is OnboardingCompleted) {
-              _navigateToHome(context); // Navigate with a custom transition
+              _navigateToMainPage(context); // Navigate with a custom transition
             }
 
             // Handle page controller updates when page changes are initiated by BLoC

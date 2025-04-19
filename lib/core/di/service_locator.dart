@@ -43,6 +43,7 @@ import '../../features/auth/presentation/bloc/splash_bloc.dart';
 import '../../features/home/data/datasources/remote/banner_remote_data_source.dart';
 import '../../features/home/data/datasources/remote/featured_remote_data_source.dart';
 import '../../features/home/domain/repositories/featured_product_repository.dart';
+import '../../features/onboarding/domain/usecases/is_onboarding_completed_usecase.dart';
 import '../network/dio_client.dart';
 import '../network/network_info.dart';
 import 'service_locator.config.dart';
@@ -130,6 +131,9 @@ void registerUseCases() {
   getIt.registerFactory(() => CheckEmailVerificationStatusUseCase(getIt<AuthRepository>()));
   getIt.registerFactory(() => GetCurrentUserUseCase(getIt<AuthRepository>()));
 
+  // onboarding use cases
+getIt.registerFactory(() => IsOnboardingCompletedUseCase(getIt<OnboardingRepository>()));
+
   // Onboarding use cases
   getIt.registerFactory(() => GetOnboardingItemsUseCase(getIt<OnboardingRepository>()));
   getIt.registerFactory(() => SetOnboardingCompletedUseCase(getIt<OnboardingRepository>()));
@@ -157,7 +161,7 @@ void registerUseCases() {
 /// Registers BLoCs for dependency injection
 void registerBlocs() {
   // Authentication BLoC
-  getIt.registerFactory<AuthBloc>(() => AuthBloc(authService: getIt<AuthService>()));
+  getIt.registerFactory<AuthBloc>(() => AuthBloc(authService: getIt<AuthService>(), isOnboardingCompletedUseCase: getIt<IsOnboardingCompletedUseCase>()));
 
   // Splash BLoC
   getIt.registerFactory(() => SplashBloc(getIt()));

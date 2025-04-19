@@ -22,42 +22,45 @@ class AuthLoading extends AuthState {
 
 /// State when the user has successfully logged in.
 class AuthLoggedIn extends AuthState {
-  final User user; // Strongly typed user model
+  final User user; // Strongly typed user 
+  final bool hasCompletedOnboarding;
 
-  const AuthLoggedIn({required this.user});
+  const AuthLoggedIn({required this.user,required this.hasCompletedOnboarding,});
 
   @override
-  List<Object?> get props => [user]; // Compare user for equality.
+  List<Object?> get props => [user, hasCompletedOnboarding]; // Compare user for equality.
 }
 
 /// State when the user has successfully registered.
+/// State when the user has successfully registered.
 class AuthRegistered extends AuthState {
   final User user; // Strongly typed user model
+  final bool hasCompletedOnboarding;
 
-  const AuthRegistered({required this.user});
+  const AuthRegistered({required this.user, this.hasCompletedOnboarding = false});
 
   @override
-  List<Object?> get props => [user]; // Compare user for equality.
+  List<Object?> get props => [user, hasCompletedOnboarding]; // Compare both properties
 }
 
 /// State when a new user is detected (e.g., after social login).
 class AuthNewUser extends AuthState {
   final User user; // Strongly typed user model
-
-  const AuthNewUser({required this.user});
+  final bool hasCompletedOnboarding;
+  const AuthNewUser({required this.user,required this.hasCompletedOnboarding});
 
   @override
-  List<Object?> get props => [user]; // Compare user for equality.
+  List<Object?> get props => [user,hasCompletedOnboarding]; // Compare user for equality.
 }
 
 /// State when an existing user is detected (e.g., after social login).
 class AuthExistingUser extends AuthState {
   final User user; // Strongly typed user model
-
-  const AuthExistingUser({required this.user});
+ final bool hasCompletedOnboarding;
+  const AuthExistingUser({required this.user,required this.hasCompletedOnboarding});
 
   @override
-  List<Object?> get props => [user]; // Compare user for equality.
+  List<Object?> get props => [user,hasCompletedOnboarding]; // Compare user for equality.
 }
 
 /// State when there is an error (e.g., wrong password, network failure).

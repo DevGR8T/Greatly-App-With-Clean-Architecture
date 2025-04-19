@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:greatly_user/core/error/failure.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../entities/user.dart';
 import 'check_email_verfication_status_usecase.dart';
 import 'get_current_user_usecase.dart';
@@ -82,7 +83,62 @@ class AuthService {
     return checkEmailVerificationStatusUseCase();
   }
 
-  Future<Either<Failure, User?>> getCurrentUser() {
-    return getCurrentUserUseCase(); 
+
+Future<bool> isFirstLoginAfterVerification(String userId) async {
+  try {
+    // Get SharedPreferences instance
+    final prefs = await SharedPreferences.getInstance();
+    
+    // Create a unique key for this user's verification status
+    final key = 'user_${userId}_has_logged_in_after_verification';
+    
+    // Check if this is the first login (key doesn't exist or is false)
+    final isFirstLogin = !(prefs.getBool(key) ?? false);
+    
+    // If it's the first login, update the preference to true for future checks
+    if (isFirstLogin) {
+      await prefs.setBool(key, true);
+    }
+    
+    return isFirstLogin;
+  } catch (e) {
+    print('Error in isFirstLoginAfterVerification: $e');
+    // Default to false if there's an error (skip onboarding)
+    return false;
   }
 }
+}
+
+
+
+
+
+//IF PREFERABLY TO USE FIRESTORE TO TRACK FIRST LOGIN USE THE CODE BELOW
+
+// Future<bool> isFirstLoginAfterVerification(String userId) async {
+//   try {
+//     final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    
+//     // Check if document exists
+//     if (!userDoc.exists) {
+//       // Create the document first
+//       await FirebaseFirestore.instance.collection('users').doc(userId).set({
+//         'hasLoggedInAfterVerification': true
+//       });
+//       return true; // First login
+//     }
+    
+//     final isFirstLogin = !(userDoc.data()?['hasLoggedInAfterVerification'] ?? false);
+    
+//     if (isFirstLogin) {
+//       await FirebaseFirestore.instance.collection('users').doc(userId).update({
+//         'hasLoggedInAfterVerification': true
+//       });
+//     }
+    
+//     return isFirstLogin;
+//   } catch (e) {
+//     print('Error in isFirstLoginAfterVerification: $e');
+//     return false;
+//   }
+// }

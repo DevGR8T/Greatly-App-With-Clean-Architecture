@@ -85,4 +85,5 @@ class SendEmailVerification extends AuthEvent {
 /// Event for checking the email verification status.
 class CheckEmailVerificationStatus extends AuthEvent {
   const CheckEmailVerificationStatus();
+  
 }

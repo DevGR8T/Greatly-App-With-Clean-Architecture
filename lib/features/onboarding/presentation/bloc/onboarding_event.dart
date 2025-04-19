@@ -35,7 +35,3 @@ class OnboardingPageChangedEvent extends OnboardingEvent {
 /// Event to request moving to the next page.
 /// Triggered when the user clicks the "Next" button.
 class RequestNextPageEvent extends OnboardingEvent {}
-
-/// Event to navigate to the home screen.
-/// Triggered when onboarding is completed, and the user is redirected to the home screen.
-class NavigateToHomeEvent extends OnboardingEvent {}
