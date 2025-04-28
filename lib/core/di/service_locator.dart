@@ -32,6 +32,16 @@ import 'package:greatly_user/features/onboarding/domain/repositories/onboarding_
 import 'package:greatly_user/features/onboarding/domain/usecases/get_onboarding_items_usecase.dart';
 import 'package:greatly_user/features/onboarding/domain/usecases/set_onboarding_completed_usecase.dart';
 import 'package:greatly_user/features/onboarding/presentation/bloc/onboarding_bloc.dart';
+import 'package:greatly_user/features/products/data/datasources/remote/category_remote_data_source.dart';
+import 'package:greatly_user/features/products/data/repository/product_repository_impl.dart';
+import 'package:greatly_user/features/products/data/repository/category_repository_implentation.dart';
+import 'package:greatly_user/features/products/domain/repository/category_repository.dart';
+import 'package:greatly_user/features/products/domain/repository/product_repository.dart';
+import 'package:greatly_user/features/products/domain/usecases/get_categories_usecase.dart';
+import 'package:greatly_user/features/products/domain/usecases/get_product_by_id_usecase.dart';
+import 'package:greatly_user/features/products/domain/usecases/get_products_usecase.dart';
+import 'package:greatly_user/features/products/presentation/bloc/category_bloc.dart';
+import 'package:greatly_user/features/products/presentation/bloc/product_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,6 +54,7 @@ import '../../features/home/data/datasources/remote/banner_remote_data_source.da
 import '../../features/home/data/datasources/remote/featured_remote_data_source.dart';
 import '../../features/home/domain/repositories/featured_product_repository.dart';
 import '../../features/onboarding/domain/usecases/is_onboarding_completed_usecase.dart';
+import '../../features/products/data/datasources/remote/product_remote_data_source.dart';
 import '../network/dio_client.dart';
 import '../network/network_info.dart';
 import 'service_locator.config.dart';
@@ -93,21 +104,53 @@ Future<void> registerRepositories() async {
   getIt.registerLazySingleton<FeaturedProductsRemoteDataSource>(
       () => FeaturedProductsRemoteDataSourceImpl(getIt()));
 
-  // Repositories
+      getIt.registerLazySingleton<CategoryRemoteDataSource>(
+    () => CategoryRemoteDataSourceImpl(
+      getIt(),
+    ),
+  );
+
+  getIt.registerLazySingleton<ProductRemoteDataSource>(
+    () => ProductRemoteDataSourceImpl(
+       getIt(),
+    ),
+  );
+  
+      
+
+  // Repositories(DATA)
   getIt.registerFactory<AuthRepository>(() => AuthRepositoryImpl(
         getIt<AuthRemoteDataSource>(),
         getIt<AuthFirestoreDataSource>(),
       ));
+
   getIt.registerLazySingleton<BannerRepository>(
       () => BannerRepositoryImpl(
             remoteDataSource: getIt(),
             networkInfo: getIt(),
           ));
+
   getIt.registerLazySingleton<FeaturedProductsRepository>(
       () => FeaturedProductsRepositoryImpl(
             remoteDataSource: getIt(),
             networkInfo: getIt(),
           ));
+
+           getIt.registerLazySingleton<CategoryRepository>(
+    () => CategoryRepositoryImpl(
+      remoteDataSource: getIt(),
+      networkInfo: getIt(),
+    ),
+  );
+  
+  getIt.registerLazySingleton<ProductRepository>(
+    () => ProductRepositoryImpl(
+      remoteDataSource: getIt(),
+      networkInfo: getIt(),
+    ),
+  );
+
+
 
   // Register dependencies for the Onboarding feature
   getIt.registerFactory<OnboardingLocalDataSource>(
@@ -141,6 +184,13 @@ getIt.registerFactory(() => IsOnboardingCompletedUseCase(getIt<OnboardingReposit
   // Home feature use cases
   getIt.registerLazySingleton(() => GetBanners(getIt()));
   getIt.registerLazySingleton(() => GetFeaturedProducts(getIt()));
+
+  // Category use case
+getIt.registerLazySingleton(() => GetCategoriesUseCase(getIt()));
+
+// Product use cases
+getIt.registerLazySingleton(() => GetProductsUseCase(getIt()));
+getIt.registerLazySingleton(() => GetProductByIdUseCase(getIt()));
 
   // AuthService
   getIt.registerFactory(() => AuthService(
@@ -178,6 +228,15 @@ void registerBlocs() {
         getFeaturedProducts: getIt<GetFeaturedProducts>(),
       ));
 
-       // Navigation BLoC
+  // Category BLoC
+  getIt.registerFactory(()=>CategoryBloc(getCategoriesUseCase: getIt()));
+
+  //  product BLoC
+  getIt.registerFactory(() => ProductBloc(
+      getProductsUseCase: getIt(),
+      getProductByIdUseCase: getIt(),
+    ));
+
+   // Navigation BLoC
   getIt.registerFactory(() => NavigationBloc());
 }

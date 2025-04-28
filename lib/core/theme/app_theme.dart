@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:greatly_user/core/theme/app_text_theme.dart';
 import 'app_colors.dart';
-import 'app_text_styles.dart';
+
 
 ThemeData appTheme() {
   return ThemeData(

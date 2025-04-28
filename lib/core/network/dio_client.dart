@@ -9,43 +9,44 @@ class DioClient {
   /// Initializes Dio with base options.
   DioClient(this._dio, this._envConfig) {
     _dio
-      ..options.baseUrl = _envConfig.apiUrl // Set the base URL
-      ..options.connectTimeout = const Duration(seconds: 30) // Connection timeout 
-      ..options.receiveTimeout = const Duration(seconds: 30) // Receive timeout 
-      ..options.responseType = ResponseType.json; // Default response type
+      ..options.baseUrl = _envConfig.apiUrl // Set the base URL.
+      ..options.connectTimeout = const Duration(seconds: 30) // Connection timeout.
+      ..options.receiveTimeout = const Duration(seconds: 30) // Receive timeout.
+      ..options.responseType = ResponseType.json; // Default response type.
+      
   }
 
   /// Performs a GET request.
-// In your dio_client.dart file, enhance the get method:
-Future<Response> get(
-  String uri, {
-  Map<String, dynamic>? queryParameters,
-  Options? options,
-  CancelToken? cancelToken,
-  ProgressCallback? onReceiveProgress,
-}) async {
-  try {
-    print('GET Request: ${_dio.options.baseUrl}$uri');
-    print('Query Parameters: $queryParameters');
-    
-    final Response response = await _dio.get(
-      uri,
-      queryParameters: queryParameters,
-      options: options,
-      cancelToken: cancelToken,
-      onReceiveProgress: onReceiveProgress,
-    );
-    
-    print('Response status: ${response.statusCode}');
-    print('Response data: ${response.data}');
-    return response;
-  } catch (e) {
-    print('Error in GET request: $e');
-    rethrow;
+  ///
+  /// [uri] is the endpoint to fetch data from.
+  /// [queryParameters] are optional query parameters for the request.
+  /// Returns the response from the server.
+  Future<Response> get(
+    String uri, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    try {
+      return await _dio.get(
+        uri,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress,
+      );
+    } catch (e) {
+      rethrow; // Rethrow the exception for higher-level handling.
+    }
   }
-}
 
   /// Performs a POST request.
+  ///
+  /// [uri] is the endpoint to send data to.
+  /// [data] is the payload for the request.
+  /// [queryParameters] are optional query parameters for the request.
+  /// Returns the response from the server.
   Future<Response> post(
     String uri, {
     data,
@@ -66,7 +67,7 @@ Future<Response> get(
         onReceiveProgress: onReceiveProgress,
       );
     } catch (e) {
-      rethrow;
+      rethrow; // Rethrow the exception for higher-level handling.
     }
   }
 }

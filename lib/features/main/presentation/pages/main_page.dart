@@ -6,6 +6,8 @@ import 'package:greatly_user/features/home/presentation/pages/homepage.dart';
 import 'package:greatly_user/features/main/presentation/bloc/navigation_event.dart';
 import 'package:greatly_user/features/main/presentation/bloc/navigation_state.dart';
 import 'package:greatly_user/features/main/presentation/widgets/bottom_navigation_bar.dart';
+import 'package:greatly_user/features/products/presentation/pages/shop_page.dart';
+
 
 
 /// The main page of the app that manages navigation between different tabs.
@@ -33,7 +35,7 @@ class _MainViewState extends State<MainView> {
   // List of screens for each tab in the bottom navigation bar.
   final List<Widget> _screens = [
     const HomePage(), // Home page
-   // const ProductListPage(), // Product list page
+   const ShopPage(showBackButton: false,), // shop page
    // const CartPage(), // Cart page
    // const ProfilePage(), // Profile page
   ];

@@ -1,6 +1,8 @@
 import '../../domain/entities/featured_product.dart';
 
+/// Model for featured products, extending the [FeaturedProduct] entity.
 class FeaturedProductModel extends FeaturedProduct {
+  /// Creates a [FeaturedProductModel] instance.
   const FeaturedProductModel({
     required super.id,
     required super.name,
@@ -11,45 +13,46 @@ class FeaturedProductModel extends FeaturedProduct {
     required super.category,
   });
 
- factory FeaturedProductModel.fromJson(Map<String, dynamic> json) {
-  // Debug prints
-  print('Parsing product JSON: $json');
+  /// Parses a JSON object into a [FeaturedProductModel].
+  factory FeaturedProductModel.fromJson(Map<String, dynamic> json) {
+    print('Parsing product JSON: $json'); // Debugging JSON parsing
 
-  String imageUrl = '';
-  try {
-    if (json['image'] != null &&
-        json['image']['formats'] != null &&
-        json['image']['formats']['small'] != null) {
-      imageUrl = json['image']['formats']['small']['url'] ?? '';
-    } else if (json['image'] != null && json['image']['url'] != null) {
-      // Fallback to the default image URL if 'formats' is missing
-      imageUrl = json['image']['url'];
+    // Extract image URL, handling nested structures and fallbacks.
+    String imageUrl = '';
+    try {
+      if (json['image'] != null &&
+          json['image']['formats'] != null &&
+          json['image']['formats']['small'] != null) {
+        imageUrl = json['image']['formats']['small']['url'] ?? '';
+      } else if (json['image'] != null && json['image']['url'] != null) {
+        imageUrl = json['image']['url'];
+      }
+    } catch (e) {
+      print('Error parsing product image: $e');
     }
-  } catch (e) {
-    print('Error parsing product image: $e');
-  }
+    print('Parsed imageUrl: $imageUrl'); // Debug parsed image URL
 
-  print('Parsed imageUrl: $imageUrl'); // Debug the parsed image URL
-
-  String category = '';
-  try {
-    if (json['category'] != null &&
-        json['category']['data'] != null &&
-        json['category']['data']['attributes'] != null) {
-      category = json['category']['data']['attributes']['name'] ?? '';
+    // Extract category name, handling nested structures.
+    String category = '';
+    try {
+      if (json['category'] != null &&
+          json['category']['data'] != null &&
+          json['category']['data']['attributes'] != null) {
+        category = json['category']['data']['attributes']['name'] ?? '';
+      }
+    } catch (e) {
+      print('Error parsing product category: $e');
     }
-  } catch (e) {
-    print('Error parsing product category: $e');
-  }
 
-  return FeaturedProductModel(
-    id: json['id'] ?? 0,
-    name: json['name'] ?? '',
-    description: json['description'] ?? '',
-    price: json['price'] != null ? (json['price'] as num).toDouble() : 0.0,
-    imageUrl: imageUrl,
-    stock: json['stock'] ?? 0,
-    category: category,
-  );
-}
+    // Return the parsed model.
+    return FeaturedProductModel(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      price: json['price'] != null ? (json['price'] as num).toDouble() : 0.0,
+      imageUrl: imageUrl,
+      stock: json['stock'] ?? 0,
+      category: category,
+    );
+  }
 }

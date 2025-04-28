@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:greatly_user/features/products/presentation/bloc/category_bloc.dart';
+import 'package:greatly_user/features/products/presentation/bloc/product_bloc.dart';
 import 'core/config/routes/routes.dart';
 import 'core/di/service_locator.dart';
 import 'core/theme/app_theme.dart';
@@ -25,6 +27,12 @@ class MyApp extends StatelessWidget {
 
         // HomeBloc for managing home page state
         BlocProvider(create: (context) => getIt<HomeBloc>()),
+
+        //ProductBloc(categoryBloc) for managing category-related state
+        BlocProvider(create: (context) => getIt<CategoryBloc>()),
+
+        //ProductBloc for managing product-related state
+        BlocProvider(create: (context) => getIt<ProductBloc>()),
         
            // NavigationBloc for managing bottom navigation state
         BlocProvider(create: (context) => getIt<NavigationBloc>()),

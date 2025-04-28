@@ -5,6 +5,7 @@ class AppColors {
   static const Color primaryVariant = Color(0xFF3700B3);
   static const Color secondary = Color(0xFF03DAC6);
   static const Color secondaryVariant = Color(0xFF018786);
+  static const Color accent = Color(0xFFFF5722); // Accent color (e.g., orange)
   static const Color background = Color(0xFFFFFFFF);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color error = Color(0xFFB00020);
@@ -13,4 +14,5 @@ class AppColors {
   static const Color onBackground = Color(0xFF000000); // Black text/icons on background
   static const Color onSurface = Color(0xFF000000); // Black text/icons on surface
   static const Color border = Color(0xFF9E9E9E);
+  static const Color grey = Color(0xFF808080); // Grey color
 }

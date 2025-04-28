@@ -16,7 +16,7 @@ class LoginPage extends StatefulWidget with SnackBarMixin {
 }
 
 class _LoginPageState extends State<LoginPage> with SnackBarMixin {
-  /// Dismisses the keyboard if it is currently active.
+  /// Dismisses the keyboard if active.
   void dismissKeyboard(BuildContext context) {
     FocusScope.of(context).unfocus();
   }
@@ -39,42 +39,41 @@ class _LoginPageState extends State<LoginPage> with SnackBarMixin {
     );
   }
 
-  /// Handles different states emitted by the AuthBloc and performs appropriate actions.
+  /// Handles different authentication states.
   void _handleState(BuildContext context, AuthState state) {
-  dismissKeyboard(context);
+    dismissKeyboard(context);
 
-  if (state is AuthNewUser) {
-    _showSnackBar(context, Strings.welcomeAccountCreated, Colors.green);
-    _navigateToMainPage(context, state.hasCompletedOnboarding);
-  } else if (state is AuthExistingUser) {
-    _showSnackBar(context, Strings.loggedIn, Colors.green);
-    _navigateToMainPage(context, state.hasCompletedOnboarding);
-  } else if (state is AuthLoggedIn) {
-    _showSnackBar(context, Strings.loggedIn, Colors.green);
-    _navigateToMainPage(context, state.hasCompletedOnboarding);
-  } else if (state is AuthRegistered) {
-    // For newly registered users, check if they need email verification
-    if (!state.user.emailVerified) {
-      _showEmailNotVerifiedDialog(context);
-    } else {
+    if (state is AuthNewUser) {
+      _showSnackBar(context, Strings.welcomeAccountCreated, Colors.green);
       _navigateToMainPage(context, state.hasCompletedOnboarding);
+    } else if (state is AuthExistingUser) {
+      _showSnackBar(context, Strings.loggedIn, Colors.green);
+      _navigateToMainPage(context, state.hasCompletedOnboarding);
+    } else if (state is AuthLoggedIn) {
+      _showSnackBar(context, Strings.loggedIn, Colors.green);
+      _navigateToMainPage(context, state.hasCompletedOnboarding);
+    } else if (state is AuthRegistered) {
+      if (!state.user.emailVerified) {
+        _showEmailNotVerifiedDialog(context);
+      } else {
+        _navigateToMainPage(context, state.hasCompletedOnboarding);
+      }
+    } else if (state is AuthEmailNotVerified) {
+      _showEmailNotVerifiedDialog(context);
+    } else if (state is AuthEmailVerificationSent) {
+      _showSnackBar(context, Strings.verificationEmailSent, Colors.green);
+    } else if (state is AuthError) {
+      _showSnackBar(context, state.message, Colors.red);
     }
-  } else if (state is AuthEmailNotVerified) {
-    _showEmailNotVerifiedDialog(context);
-  } else if (state is AuthEmailVerificationSent) {
-    _showSnackBar(context, Strings.verificationEmailSent, Colors.green);
-  } else if (state is AuthError) {
-    _showSnackBar(context, state.message, Colors.red);
   }
-}
 
-  /// Displays a SnackBar with the given message and color.
+  /// Shows a SnackBar with a message and color.
   void _showSnackBar(BuildContext context, String message, Color color) {
     ScaffoldMessenger.of(context).clearSnackBars();
     showSnackBar(context, message, color);
   }
 
-  /// Navigates to the main page or onboarding page based on the onboarding status.
+  /// Navigates to the main or onboarding page based on onboarding status.
   void _navigateToMainPage(BuildContext context, bool hasCompletedOnboarding) {
     Future.delayed(const Duration(seconds: 2), () {
       if (hasCompletedOnboarding) {
@@ -85,7 +84,7 @@ class _LoginPageState extends State<LoginPage> with SnackBarMixin {
     });
   }
 
-  /// Displays a dialog to inform the user that their email is not verified.
+  /// Shows a dialog for unverified email.
   void _showEmailNotVerifiedDialog(BuildContext context) {
     if (ModalRoute.of(context)?.isCurrent ?? false) {
       showDialog(

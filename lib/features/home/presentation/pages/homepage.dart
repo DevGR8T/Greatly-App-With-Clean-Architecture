@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:greatly_user/core/config/routes/routes.dart';
+import 'package:greatly_user/core/constants/strings.dart';
+import 'package:greatly_user/features/products/presentation/pages/product_detail_page.dart';
+import 'package:greatly_user/features/products/presentation/pages/shop_page.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/components/error_state.dart';
@@ -10,123 +14,131 @@ import '../widgets/banner_carousel.dart';
 import '../widgets/featured_products_grid.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  bool _initialLoading = true; // Tracks whether the initial loading is in progress
-
+  // Track loading status
+  bool _isLoading = true;
+  
+  // Track states
+  HomeState? _bannersState;
+  HomeState? _productsState;
+  
   @override
   void initState() {
     super.initState();
-    _loadData(initialLoad: true); // Load data when the page is initialized
+    _loadData(); // Load data when the page is initialized
   }
 
   /// Loads data for banners and featured products.
-  /// 
-  /// [initialLoad] determines whether this is the first load or a refresh.
-  Future<void> _loadData({bool initialLoad = false}) async {
-    if (initialLoad) {
-      setState(() {
-        _initialLoading = true; // Show loading spinner during the initial load
-      });
-    }
-
+  void _loadData() {
+    setState(() {
+      _isLoading = true;
+      _bannersState = null;
+      _productsState = null;
+    });
+    
     // Dispatch events to load banners and featured products
     context.read<HomeBloc>().add(GetBannersEvent());
     context.read<HomeBloc>().add(GetFeaturedProductsEvent());
-    
-    if (initialLoad) {
-      // Wait for both to complete on initial load
-      await Future.delayed(const Duration(seconds: 1));
+  }
+  
+  /// Update the state and check if loading is complete
+  void _updateState(HomeState state) {
+    if (state is BannersLoaded || state is BannersError) {
       setState(() {
-        _initialLoading = false; // Hide loading spinner after the initial load
+        _bannersState = state;
+      });
+    } else if (state is FeaturedProductsLoaded || state is FeaturedProductsError) {
+      setState(() {
+        _productsState = state;
+      });
+    }
+    
+    // Check if both have loaded (success or error)
+    if (_bannersState != null && _productsState != null) {
+      setState(() {
+        _isLoading = false;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _initialLoading
-          ? const Center(
-              child: CircularProgressIndicator(), // Show a spinner during the initial load
-            )
-          : RefreshIndicator(
-              onRefresh: () => _loadData(initialLoad: false), // Reload data on pull-to-refresh
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildBannerSection(), // Build the banner section
-                    const SizedBox(height: 15),
-                    _buildFeaturedProductsHeader(), // Build the header for featured products
-                    const SizedBox(height: 5),
-                    _buildFeaturedProductsSection(), // Build the featured products section
-                  ],
+    return BlocListener<HomeBloc, HomeState>(
+      listener: (context, state) {
+        _updateState(state);
+      },
+      child: Scaffold(
+        body: _isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : RefreshIndicator(
+                onRefresh: () async {
+                  _loadData();
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildBannerSection(),
+                      const SizedBox(height: 15),
+                      const SizedBox(height: 5),
+                      _buildFeaturedProductsSection(),
+                    ],
+                  ),
                 ),
               ),
-            ),
+      ),
     );
   }
 
   /// Builds the banner section of the homepage.
-  /// 
-  /// Displays a loading spinner, the banner carousel, or an error message based on the state.
   Widget _buildBannerSection() {
-    return BlocBuilder<HomeBloc, HomeState>(
-      buildWhen: (previous, current) =>
-          current is BannersLoading || current is BannersLoaded || current is BannersError,
-      builder: (context, state) {
-        if (state is BannersLoading) {
-          // Show a loading spinner while banners are loading
-          return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.50,
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else if (state is BannersLoaded) {
-          // Show the banner carousel when banners are loaded
-          return BannerCarousel(banners: state.banners);
-        } else if (state is BannersError) {
-          // Show an error message if loading banners fails
-          return SizedBox(
-            height: 200,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ErrorState(
-                message: state.message,
-                onRetry: () {
-                  context.read<HomeBloc>().add(GetBannersEvent()); // Retry loading banners
-                },
-              ),
-            ),
-          );
-        }
-        // Default fallback to a loading spinner
-        return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.50,
-          child: const Center(
-            child: CircularProgressIndicator(),
+    if (_bannersState is BannersLoaded) {
+      // Show the banner carousel when banners are loaded
+      return BannerCarousel(banners: (_bannersState as BannersLoaded).banners);
+    } else if (_bannersState is BannersError) {
+      // Show an error message if loading banners fails
+      return SizedBox(
+        height: 200,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ErrorStateWidget(
+            message: (_bannersState as BannersError).message,
+            onRetry: () {
+              setState(() {
+                _bannersState = null;
+                _isLoading = _productsState == null;
+              });
+              context.read<HomeBloc>().add(GetBannersEvent());
+            },
           ),
-        );
-      },
+        ),
+      );
+    }
+    
+    // Default fallback (shouldn't happen in normal use)
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.50,
+      child: const Center(
+        child: SizedBox(),
+      ),
     );
   }
 
   /// Builds the header for the featured products section.
-  /// 
-  /// Displays a title ("Featured Products") and a "View All" button.
   Widget _buildFeaturedProductsHeader() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Space between the text and button
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text(
             'Featured Products',
@@ -137,14 +149,19 @@ class _HomePageState extends State<HomePage> {
           ),
           TextButton(
             onPressed: () {
-              // Handle "View All" button press
+             // Pass showBackButton: true when navigating from View All button
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const ShopPage(showBackButton: true),
+              ),
+            );
             },
             child: const Text(
               'View All',
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
-                color: AppColors.primary, // Customize the color if needed
+                color: AppColors.primary,
               ),
             ),
           ),
@@ -154,52 +171,55 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// Builds the featured products section of the homepage.
-  /// 
-  /// Displays a loading spinner, the featured products grid, or an error message based on the state.
   Widget _buildFeaturedProductsSection() {
-    return BlocBuilder<HomeBloc, HomeState>(
-      buildWhen: (previous, current) =>
-          current is FeaturedProductsLoading || 
-          current is FeaturedProductsLoaded || 
-          current is FeaturedProductsError,
-      builder: (context, state) {
-        if (state is FeaturedProductsLoading) {
-          // Show a loading spinner while featured products are loading
-          return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.5,
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else if (state is FeaturedProductsLoaded) {
-          // Show the grid of featured products when loaded
-          return SizedBox(
+    if (_productsState is FeaturedProductsLoaded) {
+      // Show the grid of featured products when loaded
+      return Column(
+        children: [
+          _buildFeaturedProductsHeader(),
+          SizedBox(
             height: MediaQuery.of(context).size.height * 0.33,
-            child: FeaturedProductsGrid(products: state.products),
-          );
-        } else if (state is FeaturedProductsError) {
-          // Show an error message if loading featured products fails
-          return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.5,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ErrorState(
-                message: state.message,
-                onRetry: () {
-                  context.read<HomeBloc>().add(GetFeaturedProductsEvent()); // Retry loading products
-                },
-              ),
+            child: FeaturedProductsGrid(
+              products: (_productsState as FeaturedProductsLoaded).products,
+              onProductSelected: (productId) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ProductDetailPage(productId: productId),
+                  ),
+                );
+              },
             ),
-          );
-        }
-        // Default fallback to a loading spinner
-        return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.5,
-          child: const Center(
-            child: CircularProgressIndicator(),
           ),
-        );
-      },
+        ],
+      );
+    } else if (_productsState is FeaturedProductsError) {
+      // Show an error message if loading featured products fails
+      return SizedBox(
+        height: MediaQuery.of(context).size.height * 0.5,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ErrorStateWidget(
+            message: (_productsState as FeaturedProductsError).message,
+            onRetry: () {
+              setState(() {
+                _productsState = null;
+                _isLoading = _bannersState == null;
+              });
+              context.read<HomeBloc>().add(GetFeaturedProductsEvent());
+            },
+          ),
+        ),
+      );
+    }
+    
+    // Default fallback (shouldn't happen in normal use)
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.5,
+      child: const Center(
+        child: SizedBox(),
+      ),
     );
   }
 }

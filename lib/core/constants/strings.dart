@@ -48,6 +48,9 @@ class Strings {
   static const String passwordResetFailed = 'No account found with this email';
   static const String send = 'Send Reset Link';
 
+  //Shop Page
+  static const String searchHint = 'Search products';
+
 
   // Routes
   static const String signupRoute = '/register';
@@ -57,6 +60,7 @@ class Strings {
   static const String splashRoute = '/splash';  
   static const String onboardingRoute = '/onboarding';
    static const String mainRoute = '/main';
+   static const String shopRoute = '/shop';
   // APIs
   static const String appName = 'greatly';
   static const String apiBaseUrl = 'http://192.168.43.128:1337/api'; // Fixed Base URL for API requests

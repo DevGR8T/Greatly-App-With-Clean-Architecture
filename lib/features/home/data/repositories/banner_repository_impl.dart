@@ -7,15 +7,20 @@ import '../../domain/entities/banner.dart';
 import '../../domain/repositories/banner_repository.dart';
 import '../datasources/remote/banner_remote_data_source.dart';
 
+/// Implementation of [BannerRepository] to manage banner data.
 class BannerRepositoryImpl implements BannerRepository {
-  final BannerRemoteDataSource remoteDataSource;
-  final NetworkInfo networkInfo;
+  final BannerRemoteDataSource remoteDataSource; // Remote data source for banners.
+  final NetworkInfo networkInfo; // Checks network connectivity.
 
+  /// Initializes the repository with required dependencies.
   BannerRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
   });
 
+  /// Fetches banners from the remote data source if connected to the internet.
+  ///
+  /// Returns a [Failure] if there's no connection or a server error occurs.
   @override
   Future<Either<Failure, List<Banner>>> getBanners() async {
     if (await networkInfo.isConnected) {
