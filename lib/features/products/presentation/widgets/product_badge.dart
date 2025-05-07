@@ -16,7 +16,7 @@ class ProductBadge extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme; // Access the app's text theme.
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
       decoration: BoxDecoration(
         color: color ?? AppColors.primary, // Default to primary color if none provided.
         borderRadius: BorderRadius.circular(4),

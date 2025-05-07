@@ -1,4 +1,3 @@
-
 import '../../domain/entities/product.dart';
 import 'category_model.dart';
 
@@ -36,6 +35,21 @@ class ProductModel extends Product {
           specifications: specifications,
           createdAt: createdAt,
         );
+
+  // Helper method to safely parse rating values
+  static double parseRating(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) {
+      try {
+        return double.parse(value);
+      } catch (_) {
+        return 0.0;
+      }
+    }
+    return 0.0;
+  }
 
 factory ProductModel.fromJson(Map<String, dynamic> json) {
   print('Complete product JSON: $json'); // Keep this for debugging
@@ -226,6 +240,25 @@ factory ProductModel.fromJson(Map<String, dynamic> json) {
     originalPrice = (json['originalPrice'] is num) ? (json['originalPrice'] as num).toDouble() : price;
   }
   
+  // Parse rating more safely
+  double rating = 0.0;
+  try {
+    // First check for direct rating in json
+    if (json['rating'] != null) {
+      rating = parseRating(json['rating']);
+    }
+    // Then check rating in attributes for Strapi structure
+    else if (json['attributes'] != null && json['attributes']['rating'] != null) {
+      rating = parseRating(json['attributes']['rating']);
+    }
+    
+    // Debug output for rating
+    print('Extracted rating for product: ${json['name'] ?? 'Unknown'} = $rating');
+  } catch (e) {
+    print('Error parsing rating: $e');
+    rating = 0.0;
+  }
+  
   return ProductModel(
     id: id.isEmpty ? json['id']?.toString() ?? '' : id,
     name: json['name']?.toString() ?? 'Unknown Product',
@@ -236,7 +269,7 @@ factory ProductModel.fromJson(Map<String, dynamic> json) {
     imageUrl: imageUrl,
     images: images.isNotEmpty ? images : [imageUrl],  // Use the images list, fallback to single image
     category: category,
-    rating: (json['rating'] is num) ? (json['rating'] as num).toDouble() : 0.0,
+    rating: rating, // Use the safely parsed rating
     reviewCount: json['reviewCount'] is num ? json['reviewCount'] : 0,
     isNew: json['isNew'] == true,
     stockQuantity: json['stock'] is num ? json['stock'] : 0,

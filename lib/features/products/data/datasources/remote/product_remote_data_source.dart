@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:greatly_user/core/network/dio_client.dart';
+import 'package:greatly_user/features/products/data/model/category_model.dart';
 import 'package:greatly_user/features/products/data/model/product_model.dart';
+import 'package:greatly_user/features/reviews/data/datasources/remote/review_remote_data_source.dart';
+
 import '../../../../../core/error/exceptions.dart';
 
-/// Interface for fetching products from a remote server.
 abstract class ProductRemoteDataSource {
-  /// Fetches a list of products with optional filters and pagination.
   Future<Map<String, dynamic>> getProducts({
     String? query,
     String? categoryId,
@@ -13,17 +14,15 @@ abstract class ProductRemoteDataSource {
     int page = 1,
   });
 
-  /// Fetches a single product by its ID.
   Future<ProductModel> getProductById(String id);
 }
 
-/// Implementation of ProductRemoteDataSource using Dio for HTTP requests.
 class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   final DioClient client;
+  final ReviewRemoteDataSource reviewRemoteDataSource;
 
-  ProductRemoteDataSourceImpl(this.client);
+  ProductRemoteDataSourceImpl(this.client, this.reviewRemoteDataSource);
 
-  /// Fetches a paginated list of products from the API.
   @override
   Future<Map<String, dynamic>> getProducts({
     String? query,
@@ -55,9 +54,43 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
 
       if (response.statusCode == 200) {
         final productsJsonList = response.data['data'] as List<dynamic>;
-        final products = productsJsonList
-            .map((json) => ProductModel.fromJson(json))
-            .toList();
+
+        final List<ProductModel> products = [];
+        for (var json in productsJsonList) {
+          final product = ProductModel.fromJson(json);
+
+          // Fetch reviews for this product
+          final reviews = await reviewRemoteDataSource.getProductReviews(product.id);
+          double averageRating = 0.0;
+          if (reviews.isNotEmpty) {
+            final validReviews = reviews.where((review) => review.rating > 0).toList();
+            if (validReviews.isNotEmpty) {
+              final sum = validReviews.fold<double>(0, (sum, review) => sum + review.rating);
+              averageRating = sum / validReviews.length;
+            }
+          }
+
+          // Update product with calculated rating and review count
+          products.add(ProductModel(
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            originalPrice: product.originalPrice,
+            discount: product.discount,
+            imageUrl: product.imageUrl,
+            images: product.images,
+            category: product.category as CategoryModel,
+            rating: averageRating,
+            reviewCount: reviews.length,
+            isNew: product.isNew,
+            stockQuantity: product.stockQuantity,
+            specifications: product.specifications,
+            createdAt: product.createdAt,
+          ));
+
+          print('Product: ${product.name}, Calculated Rating: $averageRating, Reviews: ${reviews.length}');
+        }
 
         final hasMore = response.data['meta']?['pagination']?['hasNextPage'] ?? false;
 
@@ -69,11 +102,11 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
         throw ServerException('Failed to load products');
       }
     } catch (e) {
+      print('Exception in getProducts: $e');
       throw ServerException('An unexpected error occurred: $e');
     }
   }
 
-  /// Fetches a single product by its ID from the API.
   @override
   Future<ProductModel> getProductById(String id) async {
     try {
@@ -94,11 +127,67 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
           if (productItem is Map && productItem['attributes'] != null) {
             final attributes = productItem['attributes'] as Map<String, dynamic>;
             attributes['id'] = productItem['id'];
-            return ProductModel.fromJson(attributes);
+            final product = ProductModel.fromJson(attributes);
+
+            // Fetch reviews for this product
+            final reviews = await reviewRemoteDataSource.getProductReviews(product.id);
+            double averageRating = 0.0;
+            if (reviews.isNotEmpty) {
+              final validReviews = reviews.where((review) => review.rating > 0).toList();
+              if (validReviews.isNotEmpty) {
+                final sum = validReviews.fold<double>(0, (sum, review) => sum + review.rating);
+                averageRating = sum / validReviews.length;
+              }
+            }
+
+            return ProductModel(
+              id: product.id,
+              name: product.name,
+              description: product.description,
+              price: product.price,
+              originalPrice: product.originalPrice,
+              discount: product.discount,
+              imageUrl: product.imageUrl,
+              images: product.images,
+              category: product.category as CategoryModel,
+              rating: averageRating,
+              reviewCount: reviews.length,
+              isNew: product.isNew,
+              stockQuantity: product.stockQuantity,
+              specifications: product.specifications,
+              createdAt: product.createdAt,
+            );
           }
 
           if (productItem is Map) {
-            return ProductModel.fromJson(productItem.cast<String, dynamic>());
+            final product = ProductModel.fromJson(productItem.cast<String, dynamic>());
+            final reviews = await reviewRemoteDataSource.getProductReviews(product.id);
+            double averageRating = 0.0;
+            if (reviews.isNotEmpty) {
+              final validReviews = reviews.where((review) => review.rating > 0).toList();
+              if (validReviews.isNotEmpty) {
+                final sum = validReviews.fold<double>(0, (sum, review) => sum + review.rating);
+                averageRating = sum / validReviews.length;
+              }
+            }
+
+            return ProductModel(
+              id: product.id,
+              name: product.name,
+              description: product.description,
+              price: product.price,
+              originalPrice: product.originalPrice,
+              discount: product.discount,
+              imageUrl: product.imageUrl,
+              images: product.images,
+              category: product.category as CategoryModel,
+              rating: averageRating,
+              reviewCount: reviews.length,
+              isNew: product.isNew,
+              stockQuantity: product.stockQuantity,
+              specifications: product.specifications,
+              createdAt: product.createdAt,
+            );
           }
         }
 
@@ -116,7 +205,6 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     }
   }
 
-  /// Maps sort options to API-compatible values.
   String _mapSortOption(String sortOption) {
     switch (sortOption) {
       case 'newest':
@@ -126,13 +214,12 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       case 'priceHighToLow':
         return 'price:desc';
       case 'rating':
-        return 'rating:desc';
+        return 'createdAt:desc'; // We'll sort by rating client-side after calculating averages
       default:
         return 'createdAt:desc';
     }
   }
 
-  /// Maps Dio exceptions to user-friendly error messages.
   String _mapDioError(DioException e) {
     switch (e.type) {
       case DioExceptionType.connectionTimeout:

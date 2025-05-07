@@ -8,6 +8,8 @@ class CustomTextField extends StatelessWidget {
   final TextInputAction textInputAction;
   final bool obscureText;
   final Widget? suffixIcon;
+  final String hintText;
+ 
 
   const CustomTextField({
     Key? key,
@@ -18,6 +20,7 @@ class CustomTextField extends StatelessWidget {
     this.textInputAction = TextInputAction.done,
     this.obscureText = false,
     this.suffixIcon,
+    this.hintText = '' ,
   }) : super(key: key);
 
   @override
@@ -26,6 +29,7 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         labelText: labelText,
+        hintText: hintText,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
         ),
@@ -38,6 +42,7 @@ class CustomTextField extends StatelessWidget {
       textInputAction: textInputAction,
       obscureText: obscureText,
       autovalidateMode: AutovalidateMode.onUserInteraction,
+     
     );
   }
 }

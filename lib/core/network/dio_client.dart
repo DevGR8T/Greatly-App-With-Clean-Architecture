@@ -17,10 +17,6 @@ class DioClient {
   }
 
   /// Performs a GET request.
-  ///
-  /// [uri] is the endpoint to fetch data from.
-  /// [queryParameters] are optional query parameters for the request.
-  /// Returns the response from the server.
   Future<Response> get(
     String uri, {
     Map<String, dynamic>? queryParameters,
@@ -42,11 +38,6 @@ class DioClient {
   }
 
   /// Performs a POST request.
-  ///
-  /// [uri] is the endpoint to send data to.
-  /// [data] is the payload for the request.
-  /// [queryParameters] are optional query parameters for the request.
-  /// Returns the response from the server.
   Future<Response> post(
     String uri, {
     data,
@@ -65,6 +56,50 @@ class DioClient {
         cancelToken: cancelToken,
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
+      );
+    } catch (e) {
+      rethrow; // Rethrow the exception for higher-level handling.
+    }
+  }
+
+  /// Performs a PUT request.
+  Future<Response> put(
+    String uri, {
+    data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    try {
+      return await _dio.put(
+        uri,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
+      );
+    } catch (e) {
+      rethrow; // Rethrow the exception for higher-level handling.
+    }
+  }
+
+  /// Performs a DELETE request.
+  Future<Response> delete(
+    String uri, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      return await _dio.delete(
+        uri,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
       );
     } catch (e) {
       rethrow; // Rethrow the exception for higher-level handling.

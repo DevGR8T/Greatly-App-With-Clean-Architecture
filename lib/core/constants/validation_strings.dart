@@ -11,6 +11,8 @@ class ValidationStrings {
 
   static const String phoneNumberRequired = 'Phone number is required';
   static const String invalidPhoneNumber = 'Enter a valid phone number';
+
+  static const String fieldRequired = 'field is required';
 }
 
 /// Validation regex patterns.

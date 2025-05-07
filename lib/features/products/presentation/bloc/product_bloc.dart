@@ -1,144 +1,175 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:greatly_user/features/products/presentation/widgets/filter_options.dart';
 import '../../domain/entities/product.dart';
 import '../../domain/usecases/get_products_usecase.dart';
 import '../../domain/usecases/get_product_by_id_usecase.dart';
 import 'product_event.dart';
 import 'product_state.dart';
 
-/// Bloc to handle product-related events and manage states.
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
-  final GetProductsUseCase getProductsUseCase; // Fetches a list of products.
-  final GetProductByIdUseCase getProductByIdUseCase; // Fetches a single product by ID.
+  final GetProductsUseCase getProductsUseCase;
+  final GetProductByIdUseCase getProductByIdUseCase;
 
   ProductBloc({
     required this.getProductsUseCase,
     required this.getProductByIdUseCase,
   }) : super(ProductInitial()) {
-    on<GetProducts>(_onGetProducts); // Handles fetching products.
-    on<GetProductById>(_onGetProductById); // Handles fetching a single product.
-    on<LoadMoreProducts>(_onLoadMoreProducts); // Handles pagination for products.
+    on<GetProducts>(_onGetProducts);
+    on<GetProductById>(_onGetProductById);
+    on<LoadMoreProducts>(_onLoadMoreProducts);
   }
 
-  /// Fetches products based on query, category, and sort options.
   Future<void> _onGetProducts(
     GetProducts event,
     Emitter<ProductState> emit,
   ) async {
-    emit(ProductInitial()); // Show loading state.
+    emit(ProductInitial());
+
+    print('Getting products with sort option: ${event.sortOption?.name}');
+
+    final backendSortOption = event.sortOption?.name == 'rating' 
+        ? 'createdAt:desc'
+        : event.sortOption?.name;
 
     final params = GetProductsParams(
       query: event.query,
       categoryId: event.categoryId,
-      sortOption: event.sortOption?.name,
+      sortOption: backendSortOption,
       page: 1,
       refresh: event.refresh,
     );
 
     final result = await getProductsUseCase(params);
+
     result.fold(
-      (failure) => emit(ProductError(failure.message)), // Show error state.
-      (productData) => emit(ProductLoaded(
-        products: productData.products,
-        hasMore: productData.hasMore,
-        page: 1,
-      )), // Show loaded state with products.
+      (failure) => emit(ProductError(failure.message)),
+      (productData) {
+        List<Product> products = List<Product>.from(productData.products);
+
+        if (event.sortOption?.name == 'rating') {
+          products.sort((a, b) {
+            double aRating = a.rating > 0 ? a.rating : double.negativeInfinity;
+            double bRating = b.rating > 0 ? b.rating : double.negativeInfinity;
+            int ratingCompare = bRating.compareTo(aRating);
+            if (ratingCompare != 0) return ratingCompare;
+            return a.name.compareTo(b.name);
+          });
+
+          print('Products after sorting by rating:');
+          for (var product in products) {
+            print('${product.name}: Rating = ${product.rating}');
+          }
+        }
+
+        emit(ProductLoaded(
+          products: products,
+          hasMore: productData.hasMore,
+          page: 1,
+        ));
+      },
     );
   }
 
-  /// Fetches a single product by its ID.
-Future<void> _onGetProductById(
-  GetProductById event,
-  Emitter<ProductState> emit,
-) async {
-  emit(ProductInitial()); // Show loading state.
+  Future<void> _onGetProductById(
+    GetProductById event,
+    Emitter<ProductState> emit,
+  ) async {
+    emit(ProductInitial());
 
-  // First get the product details
-  final result = await getProductByIdUseCase(event.id);
-  
-  // Handle product result
-  return result.fold(
-    (failure) {
-      // In case of failure, emit error state and finish
-      emit(ProductError(failure.message));
-    },
-    (product) async {
-      // We found the product, now get related products
-      // Important: we must handle this within the fold for proper async behavior
-      
-      try {
-        final categoryParams = GetProductsParams(
-          categoryId: product.category.id,
-          page: 1,
-        );
-        
-        final categoryResult = await getProductsUseCase(categoryParams);
-        
-        // Handle the result of fetching related products
-        categoryResult.fold(
-          (failure) {
-            // If we can't get similar products, still show the main product
-            emit(ProductLoaded(
-              products: [],
-              selectedProduct: product,
-              hasMore: false,
-            ));
-          },
-          (productData) {
-            // Filter out the current product from the list
-            final filteredProducts = productData.products
-                .where((p) => p.id != product.id)
-                .toList();
-                
-            emit(ProductLoaded(
-              products: filteredProducts,
-              selectedProduct: product,
-              hasMore: productData.hasMore,
-              page: 1,
-            ));
-          },
-        );
-      } catch (e) {
-        // In case of exception, still show the main product
-        emit(ProductLoaded(
-          products: [],
-          selectedProduct: product,
-          hasMore: false,
-        ));
-      }
-    },
-  );
-}
-  /// Loads more products for pagination.
+    final result = await getProductByIdUseCase(event.id);
+
+    return result.fold(
+      (failure) {
+        emit(ProductError(failure.message));
+      },
+      (product) async {
+        try {
+          final categoryParams = GetProductsParams(
+            categoryId: product.category.id,
+            page: 1,
+          );
+
+          final categoryResult = await getProductsUseCase(categoryParams);
+
+          categoryResult.fold(
+            (failure) {
+              emit(ProductLoaded(
+                products: [],
+                selectedProduct: product,
+                hasMore: false,
+              ));
+            },
+            (productData) {
+              final filteredProducts = productData.products
+                  .where((p) => p.id != product.id)
+                  .toList();
+
+              filteredProducts.sort((a, b) => b.rating.compareTo(a.rating));
+
+              emit(ProductLoaded(
+                products: filteredProducts,
+                selectedProduct: product,
+                hasMore: productData.hasMore,
+                page: 1,
+              ));
+            },
+          );
+        } catch (e) {
+          emit(ProductLoaded(
+            products: [],
+            selectedProduct: product,
+            hasMore: false,
+          ));
+        }
+      },
+    );
+  }
+
   Future<void> _onLoadMoreProducts(
     LoadMoreProducts event,
     Emitter<ProductState> emit,
   ) async {
     final currentState = state;
     if (currentState is ProductLoaded && !currentState.isLoading && currentState.hasMore) {
-      emit(currentState.copyWith(isLoading: true)); // Show loading state for pagination.
+      emit(currentState.copyWith(isLoading: true));
 
       final nextPage = currentState.page + 1;
+
+      final backendSortOption = event.sortOption?.name == 'rating' 
+          ? 'createdAt:desc'
+          : event.sortOption?.name;
+
       final params = GetProductsParams(
         query: event.query,
         categoryId: event.categoryId,
-        sortOption: event.sortOption?.name,
+        sortOption: backendSortOption,
         page: nextPage,
       );
 
       final result = await getProductsUseCase(params);
       result.fold(
-        (failure) => emit(ProductError(failure.message)), // Show error state.
+        (failure) => emit(ProductError(failure.message)),
         (productData) {
-          final updatedProducts = List<Product>.from(currentState.products)
-            ..addAll(productData.products);
+          List<Product> allProducts = List<Product>.from(currentState.products);
+          allProducts.addAll(productData.products);
+
+          if (event.sortOption?.name == 'rating') {
+            allProducts.sort((a, b) {
+              double aRating = a.rating > 0 ? a.rating : double.negativeInfinity;
+              double bRating = b.rating > 0 ? b.rating : double.negativeInfinity;
+              int ratingCompare = bRating.compareTo(aRating);
+              if (ratingCompare != 0) return ratingCompare;
+              return a.name.compareTo(b.name);
+            });
+          }
 
           emit(ProductLoaded(
-            products: updatedProducts,
+            products: allProducts,
             selectedProduct: currentState.selectedProduct,
             hasMore: productData.hasMore,
             page: nextPage,
             isLoading: false,
-          )); // Show updated loaded state with more products.
+          ));
         },
       );
     }

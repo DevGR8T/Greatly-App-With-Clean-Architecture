@@ -1,13 +1,12 @@
-// lib/features/product/presentation/widgets/product_card.dart
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:greatly_user/core/constants/strings.dart';
-import 'package:greatly_user/features/products/presentation/widgets/product_badge.dart';
+import 'package:greatly_user/core/di/service_locator.dart';
 import 'package:greatly_user/shared/components/app_shimmer.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../domain/entities/product.dart';
+import '../widgets/product_badge.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -55,7 +54,6 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  /// Builds the product image with badges.
   Widget _buildProductImage() {
     return Stack(
       children: [
@@ -111,7 +109,6 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  /// Builds the product category text.
   Widget _buildCategory() {
     return Text(
       product.category.name,
@@ -123,7 +120,6 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  /// Builds the product name text.
   Widget _buildProductName() {
     return Text(
       product.name,
@@ -133,7 +129,6 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  /// Builds the price row with discount and final price.
   Widget _buildPriceRow() {
     return Row(
       children: [
@@ -159,14 +154,13 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  /// Builds the rating row with stars and review count.
   Widget _buildRatingRow() {
     return Row(
       children: [
         Icon(Icons.star, size: 16, color: Colors.amber),
         const SizedBox(width: 4),
         Text(
-          '${product.rating}',
+          '${product.rating.toStringAsFixed(1)}',
           style: AppTextStyles.caption,
         ),
         const SizedBox(width: 4),

@@ -23,6 +23,19 @@ class CacheFailure extends Failure {
 class ConnectionFailure extends Failure {
   const ConnectionFailure(super.message);
 }
+/// Represents a failure due to an invalid input.
+class UnauthorizedFailure extends Failure {
+  const UnauthorizedFailure(String message) : super(message);
+}
+/// Represents a failure due to forbidden access.
+class ForbiddenFailure extends Failure {
+  const ForbiddenFailure(String message) : super(message);
+}
+
+/// Represents a failure related to authentication.
+class AuthFailure extends Failure {
+  const AuthFailure(String message) : super(message);
+}
 
 /// Represents a failure when a user is not found.
 class UserNotFoundFailure extends Failure {
