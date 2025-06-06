@@ -33,7 +33,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     try {
       final queryParams = {
         'pagination[page]': page,
-        'pagination[pageSize]': 10,
+        'pagination[pageSize]': 100,
         'populate': '*',
       };
 

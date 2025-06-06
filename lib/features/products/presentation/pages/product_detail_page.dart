@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:greatly_user/features/cart/domain/entities/cart_item.dart';
+import 'package:greatly_user/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:greatly_user/features/reviews/presentation/bloc/review_bloc.dart';
 import 'package:greatly_user/features/reviews/presentation/pages/review_page.dart';
 import 'package:greatly_user/features/reviews/presentation/widgets/rating_stars.dart';
@@ -97,7 +99,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return SliverAppBar(
       pinned: true,
       leading: IconButton(
-          icon:  Icon(Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back), // Use iOS-specific icon),
+          icon: Icon(Platform.isIOS
+              ? Icons.arrow_back_ios
+              : Icons.arrow_back), // Use iOS-specific icon),
           onPressed: () {
             Navigator.of(context).pop();
             FocusScope.of(context).unfocus();
@@ -107,7 +111,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           icon: const Icon(Icons.favorite_border),
           onPressed: () {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Added to wishlist')),
+              const SnackBar(
+                content: Text('Added to wishlist'),
+                backgroundColor: AppColors.success,
+                duration: Duration(seconds: 1),
+              ),
             );
           },
         ),
@@ -123,7 +131,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  /// Builds the product image carousel with thumbnails like in the first image
+ 
   /// Builds the product image carousel with thumbnails
   Widget _buildProductImages(Product product) {
     final List<String> images = product.images.isNotEmpty
@@ -320,64 +328,64 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   /// Builds the product rating section
-Widget _buildRating(Product product) {
-  return BlocProvider(
-    create: (context) => getIt<ReviewBloc>()
-      ..add(FetchProductReviews(productId: product.id)),
-    child: BlocBuilder<ReviewBloc, ReviewState>(
-      builder: (context, state) {
-        // Default values from product entity (fallback)
-        double displayRating = product.rating;
-        int displayReviewCount = product.reviewCount;
-        
-        // If we have loaded review data, use that instead
-        if (state is ReviewsLoaded) {
-          displayRating = state.averageRating;
-          displayReviewCount = state.reviews.length;
-        }
-        
-        return Row(
-          children: [
-            Row(
-              children: [
-                RatingStars(
-                  rating: displayRating,
-                  size: 20,
-                  showRatingText: true,
-                  reviewCount: displayReviewCount,
-                  ratingTextStyle:
-                      AppTextStyles.bodyText2.copyWith(color: Colors.grey[600]),
-                ),
-              ],
-            ),
-            const Spacer(),
-            TextButton(
-              onPressed: () {
-                // Navigate to reviews page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ReviewPage(
-                      productId: product.id,
-                      productName: product.name,
-                    ),
+  Widget _buildRating(Product product) {
+    return BlocProvider(
+      create: (context) =>
+          getIt<ReviewBloc>()..add(FetchProductReviews(productId: product.id)),
+      child: BlocBuilder<ReviewBloc, ReviewState>(
+        builder: (context, state) {
+          // Default values from product entity (fallback)
+          double displayRating = product.rating;
+          int displayReviewCount = product.reviewCount;
+
+          // If we have loaded review data, use that instead
+          if (state is ReviewsLoaded) {
+            displayRating = state.averageRating;
+            displayReviewCount = state.reviews.length;
+          }
+
+          return Row(
+            children: [
+              Row(
+                children: [
+                  RatingStars(
+                    rating: displayRating,
+                    size: 20,
+                    showRatingText: true,
+                    reviewCount: displayReviewCount,
+                    ratingTextStyle: AppTextStyles.bodyText2
+                        .copyWith(color: Colors.grey[600]),
                   ),
-                );
-              },
-              child: Text(
-                'See more >',
-                style: AppTextStyles.bodyText2.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w500,
+                ],
+              ),
+              const Spacer(),
+              TextButton(
+                onPressed: () {
+                  // Navigate to reviews page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ReviewPage(
+                        productId: product.id,
+                        productName: product.name,
+                      ),
+                    ),
+                  );
+                },
+                child: Text(
+                  'See more >',
+                  style: AppTextStyles.bodyText2.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
-          ],
-        );
-      },
-    ),
-  );
-}
+            ],
+          );
+        },
+      ),
+    );
+  }
 
   /// Builds the product price section
   Widget _buildPrice(Product product) {
@@ -626,7 +634,11 @@ Widget _buildRating(Product product) {
               ),
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Added to wishlist')),
+                  const SnackBar(
+                    content: Text('Added to wishlist'),
+                    duration: Duration(seconds: 1),
+                    backgroundColor: AppColors.success,
+                  ),
                 );
               },
             ),
@@ -635,7 +647,10 @@ Widget _buildRating(Product product) {
           Expanded(
             flex: 2,
             child: ElevatedButton.icon(
-              icon: const Icon(Icons.shopping_cart),
+              icon: const Icon(
+                Icons.shopping_cart,
+                color: AppColors.background,
+              ),
               label: const Text('Add to Cart'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
@@ -645,13 +660,43 @@ Widget _buildRating(Product product) {
                 // Check if size is selected for fashion items
                 if (isFashionCategory && _selectedSize == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please select a size')),
+                    const SnackBar(
+                      content: Text('Please select a size',
+                          style: TextStyle(fontWeight: FontWeight.w500)),
+                      duration: Duration(seconds: 1),
+                      backgroundColor: AppColors.error,
+                    ),
                   );
                   return;
                 }
 
+                // Create a cart item from the product
+                final CartItem cartItem = CartItem(
+                  id: product
+                      .id, // Use product.id as the item.id for consistency
+                  productId: product.id,
+                  name: product.name,
+                  price: product.price,
+                  quantity: _quantity,
+                  imageUrl: product.imageUrl,
+                  variant: isFashionCategory && _selectedSize != null
+                      ? _selectedSize!
+                      : '',
+                );
+
+                // Dispatch AddToCartEvent to CartBloc
+                BlocProvider.of<CartBloc>(context)
+                    .add(AddToCartEvent(cartItem: cartItem));
+
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Added to cart')),
+                  const SnackBar(
+                    content: Text(
+                      'product Added to cart',
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    duration: Duration(seconds: 1),
+                    backgroundColor: AppColors.success,
+                  ),
                 );
               },
             ),

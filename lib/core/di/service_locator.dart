@@ -20,6 +20,15 @@ import 'package:greatly_user/features/auth/data/datasources/remote/auth_remote_d
 import 'package:greatly_user/features/auth/data/datasources/remote/auth_firestore_data_source.dart';
 import 'package:greatly_user/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:greatly_user/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:greatly_user/features/cart/data/datasources/local/cart_local_data_source.dart';
+import 'package:greatly_user/features/cart/data/repositories/cart_repository_impl.dart';
+import 'package:greatly_user/features/cart/domain/usecases/add_to_cart_usecase.dart';
+import 'package:greatly_user/features/cart/domain/usecases/clear_cart_usecase.dart';
+import 'package:greatly_user/features/cart/domain/usecases/get_cart_usecase.dart';
+import 'package:greatly_user/features/cart/domain/usecases/remove_from_cart_usecase.dart';
+import 'package:greatly_user/features/cart/domain/usecases/syncofflineaction_usecase.dart';
+import 'package:greatly_user/features/cart/domain/usecases/update_cart_usecase.dart';
+import 'package:greatly_user/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:greatly_user/features/home/data/repositories/banner_repository_impl.dart';
 import 'package:greatly_user/features/home/data/repositories/featured_products_repository_impl.dart';
 import 'package:greatly_user/features/home/domain/repositories/banner_repository.dart';
@@ -57,6 +66,25 @@ import '../../features/auth/domain/usecases/check_email_verfication_status_useca
 import '../../features/auth/domain/usecases/get_current_user_usecase.dart';
 import '../../features/auth/domain/usecases/register_with_email_usecase.dart';
 import '../../features/auth/presentation/bloc/splash_bloc.dart';
+import '../../features/cart/data/datasources/remote/cart_remote_data_source.dart';
+import '../../features/cart/domain/repository/cart_repository.dart';
+import '../../features/checkout/data/datasources/remote/checkout_remote_datasource.dart';
+import '../../features/checkout/data/repository/check_out_repository_impl.dart';
+import '../../features/checkout/domain/repository/check_out_repository.dart';
+import '../../features/checkout/domain/usecases/add_payment_method.dart';
+import '../../features/checkout/domain/usecases/cancel_order.dart';
+import '../../features/checkout/domain/usecases/confirm_payment.dart';
+import '../../features/checkout/domain/usecases/create_order.dart';
+import '../../features/checkout/domain/usecases/create_stripe_portal_session.dart';
+import '../../features/checkout/domain/usecases/delete_address.dart';
+import '../../features/checkout/domain/usecases/delete_payment_method.dart';
+import '../../features/checkout/domain/usecases/get_order_by_id.dart';
+import '../../features/checkout/domain/usecases/get_saved_addresses.dart';
+import '../../features/checkout/domain/usecases/get_saved_payment_methods.dart';
+import '../../features/checkout/domain/usecases/get_user_orders.dart';
+import '../../features/checkout/domain/usecases/initialize_payment.dart';
+import '../../features/checkout/domain/usecases/save_address.dart';
+import '../../features/checkout/presentation/bloc/checkout_bloc.dart';
 import '../../features/home/data/datasources/remote/banner_remote_data_source.dart';
 import '../../features/home/data/datasources/remote/featured_remote_data_source.dart';
 import '../../features/home/domain/repositories/featured_product_repository.dart';
@@ -144,6 +172,10 @@ getIt.registerLazySingleton<ReviewRemoteDataSource>(
     ),
   );
 
+  getIt.registerLazySingleton<CartRemoteDataSource>(
+    () => CartRemoteDataSourceImpl(dioClient: getIt()),
+  );
+
       
 
   // Repositories(DATA)
@@ -185,7 +217,36 @@ getIt.registerLazySingleton<ReviewRemoteDataSource>(
     ),
   );
 
-  
+   getIt.registerLazySingleton<CartRepository>(
+    () => CartRepositoryImpl(
+      remoteDataSource: getIt(),
+      localDataSource: getIt(),
+      networkInfo: getIt(),
+    ),
+  );
+
+
+  // Register CartLocalDataSource
+  getIt.registerLazySingleton<CartLocalDataSource>(
+    () => CartLocalDataSourceImpl(sharedPreferences: getIt()),
+  );
+
+// Register CheckoutRemoteDataSource and CheckoutRepository
+  getIt.registerLazySingleton<CheckoutRemoteDataSource>(
+  () => CheckoutRemoteDataSourceImpl(
+    dioClient: getIt<DioClient>(),
+    firebaseAuth: FirebaseAuth.instance,
+  ),
+);
+
+getIt.registerLazySingleton<CheckoutRepository>(
+  () => CheckoutRepositoryImpl(
+    remoteDataSource: getIt<CheckoutRemoteDataSource>(),
+    networkInfo: getIt<NetworkInfo>(),
+  ),
+);
+
+
 
   // Register dependencies for the Onboarding feature
   getIt.registerFactory<OnboardingLocalDataSource>(
@@ -232,6 +293,33 @@ getIt.registerLazySingleton(() => GetProductByIdUseCase(getIt()));
   getIt.registerLazySingleton(() => GetProductAverageRatingUseCase(getIt()));
   getIt.registerLazySingleton(() => SubmitReviewUseCase(getIt()));
   getIt.registerLazySingleton(() => HasUserReviewedProductUseCase(getIt()));
+
+   // Cart UseCases
+  getIt.registerLazySingleton(() => AddToCartUseCase(repository: getIt()));
+  getIt.registerLazySingleton(() => GetCartUseCase(repository: getIt()));
+  getIt.registerLazySingleton(() => UpdateCartItemUseCase(repository: getIt()));
+  getIt.registerLazySingleton(() => RemoveFromCartUseCase(repository: getIt()));
+  getIt.registerLazySingleton(() => ClearCartUseCase(repository: getIt()));
+  getIt.registerLazySingleton(() => SyncOfflineCartActionsUseCase(getIt()));
+
+  //checkout use cases
+  getIt.registerLazySingleton(() => SaveAddress(getIt()));
+  getIt.registerLazySingleton(() => GetSavedAddresses(getIt()));
+  getIt.registerLazySingleton(() => DeleteAddress(getIt()));
+  getIt.registerLazySingleton(() => GetSavedPaymentMethods(getIt()));
+  getIt.registerLazySingleton(() => CreateOrder(getIt()));
+  getIt.registerLazySingleton(() => InitializePayment(getIt()));
+  getIt.registerLazySingleton(() => ConfirmPayment(getIt()));
+  getIt.registerLazySingleton(() => CancelOrder(getIt()));
+  getIt.registerLazySingleton(() => GetOrderById(getIt()));
+  getIt.registerLazySingleton(() => GetUserOrders(getIt()));
+  getIt.registerLazySingleton(() => AddPaymentMethod(getIt()));
+  getIt.registerLazySingleton(() => DeletePaymentMethod(getIt()));
+
+  // Stripe use case
+  getIt.registerLazySingleton(() => CreateStripePortalSession(getIt()));
+  
+
  
 
   // AuthService
@@ -285,6 +373,33 @@ void registerBlocs() {
         getProductAverageRating: getIt(),
         hasUserReviewedProduct: getIt(),
         submitReview: getIt(),
+      ));
+
+      //Cart BLoC
+  getIt.registerFactory(() => CartBloc(
+        getCartUseCase: getIt(),
+        addToCartUseCase: getIt(),
+        removeFromCartUseCase: getIt(),
+        updateCartItemUseCase: getIt(),
+        clearCartUseCase: getIt(),
+        syncOfflineCartActionsUseCase: getIt(),
+      ));
+
+ // Checkout BLoC
+  getIt.registerFactory(() => CheckoutBloc(
+        saveAddress: getIt(),
+        getSavedAddresses: getIt(),
+        deleteAddress: getIt(),
+        getSavedPaymentMethods: getIt(),
+        createOrder: getIt(),
+        initializePayment: getIt(),
+        confirmPayment: getIt(),
+        cancelOrder: getIt(),
+        getOrderById: getIt(),
+        getUserOrders: getIt(),
+        addPaymentMethod: getIt(),
+        deletePaymentMethod: getIt(),
+        createStripePortalSession: getIt(),
       ));
 
    // Navigation BLoC

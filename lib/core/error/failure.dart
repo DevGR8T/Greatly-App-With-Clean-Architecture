@@ -41,3 +41,14 @@ class AuthFailure extends Failure {
 class UserNotFoundFailure extends Failure {
   const UserNotFoundFailure(super.message);
 }
+
+/// Represents a failure due to the application being offline.
+class OfflineFailure extends Failure {
+  const OfflineFailure(String message) : super(message);
+}
+
+/// Represents a general failure that doesn't fit into specific categories.
+class GeneralFailure extends Failure {
+  const GeneralFailure(String message) : super(message);
+  
+}

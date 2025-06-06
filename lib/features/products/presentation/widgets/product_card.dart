@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:greatly_user/core/constants/strings.dart';
-import 'package:greatly_user/core/di/service_locator.dart';
 import 'package:greatly_user/shared/components/app_shimmer.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -11,11 +10,13 @@ import '../widgets/product_badge.dart';
 class ProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback onTap;
+  final bool showFullDetails;
 
   const ProductCard({
     Key? key,
     required this.product,
     required this.onTap,
+    this.showFullDetails = false,
   }) : super(key: key);
 
   @override
@@ -36,11 +37,12 @@ class ProductCard extends StatelessWidget {
                 padding: const EdgeInsets.all(5.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     _buildCategory(),
                     const SizedBox(height: 2),
                     _buildProductName(),
-                    const Spacer(),
+                    const SizedBox(height: 5),
                     _buildPriceRow(),
                     const SizedBox(height: 5),
                     _buildRatingRow(),
@@ -71,7 +73,7 @@ class ProductCard extends StatelessWidget {
                       child: Container(color: Colors.white),
                     ),
                     errorWidget: (context, url, error) {
-                      print("Error loading image: $url - $error");
+                      debugPrint("Error loading image: $url - $error");
                       return Container(
                         color: Colors.grey[300],
                         child: const Center(
@@ -121,33 +123,47 @@ class ProductCard extends StatelessWidget {
   }
 
   Widget _buildProductName() {
-    return Text(
-      product.name,
-      style: AppTextStyles.subtitle1,
-      maxLines: 2,
-      overflow: TextOverflow.ellipsis,
+    return Flexible(
+      child: Tooltip(
+        message: product.name,
+        child: Text(
+          product.name,
+          style: AppTextStyles.subtitle1,
+          maxLines: showFullDetails ? null : 2,
+          overflow: showFullDetails ? TextOverflow.visible : TextOverflow.ellipsis,
+          softWrap: true,
+        ),
+      ),
     );
   }
 
   Widget _buildPriceRow() {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         if (product.discount > 0) ...[
-          Text(
-            '\$${product.originalPrice.toStringAsFixed(2)}',
-            style: AppTextStyles.bodyText2.copyWith(
-              decoration: TextDecoration.lineThrough,
-              color: Colors.grey[600],
-              fontSize: 12,
+          Flexible(
+            child: Text(
+              '\$${product.originalPrice.toStringAsFixed(2)}',
+              style: AppTextStyles.bodyText2.copyWith(
+                decoration: TextDecoration.lineThrough,
+                decorationColor: Colors.red[600],
+                color: Colors.red[600],
+                fontSize: 12,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           const SizedBox(width: 6),
         ],
-        Text(
-          '\$${product.price.toStringAsFixed(2)}',
-          style: AppTextStyles.subtitle1.copyWith(
-            fontWeight: FontWeight.bold,
-            color: AppColors.primary,
+        Flexible(
+          child: Text(
+            '\$${product.price.toStringAsFixed(2)}',
+            style: AppTextStyles.subtitle1.copyWith(
+              fontWeight: FontWeight.bold,
+              color: AppColors.primary,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
@@ -156,17 +172,21 @@ class ProductCard extends StatelessWidget {
 
   Widget _buildRatingRow() {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.star, size: 16, color: Colors.amber),
+        const Icon(Icons.star, size: 16, color: Colors.amber),
         const SizedBox(width: 4),
         Text(
           '${product.rating.toStringAsFixed(1)}',
           style: AppTextStyles.caption,
         ),
         const SizedBox(width: 4),
-        Text(
-          '(${product.reviewCount})',
-          style: AppTextStyles.caption.copyWith(color: Colors.grey[600]),
+        Flexible(
+          child: Text(
+            '(${product.reviewCount})',
+            style: AppTextStyles.caption.copyWith(color: Colors.grey[600]),
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );

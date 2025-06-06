@@ -1,0 +1,110 @@
+[  +10 ms] executing: sw_vers -productName
+[  +30 ms] Exit code 0 from: sw_vers -productName
+[        ] macOS
+[        ] executing: sw_vers -productVersion
+[  +17 ms] Exit code 0 from: sw_vers -productVersion
+[        ] 13.7.4
+[        ] executing: sw_vers -buildVersion
+[  +23 ms] Exit code 0 from: sw_vers -buildVersion
+[        ] 22H420
+[        ] executing: uname -m
+[   +6 ms] Exit code 0 from: uname -m
+[        ] x86_64
+[   +8 ms] executing: sysctl hw.optional.arm64
+[   +8 ms] Exit code 1 from: sysctl hw.optional.arm64
+[        ] sysctl: unknown oid 'hw.optional.arm64'
+[ +226 ms] executing: sysctl hw.optional.arm64
+[   +9 ms] Exit code 1 from: sysctl hw.optional.arm64
+[        ] sysctl: unknown oid 'hw.optional.arm64'
+[        ] executing: xcrun xcodebuild -version
+[ +511 ms] Exit code 0 from: xcrun xcodebuild -version
+[   +1 ms] Xcode 15.2
+           Build version 15C500b
+[   +5 ms] executing: xcrun xcdevice list --timeout 5
+[  +15 ms] Artifact Instance of 'AndroidGenSnapshotArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'AndroidInternalBuildArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IOSEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterWebSdk' is not required, skipping update.
+[        ] Artifact Instance of 'LegacyCanvasKitRemover' is not required, skipping update.
+[   +4 ms] Artifact Instance of 'WindowsEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'MacOSEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'LinuxEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'LinuxFuchsiaSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'MacOSFuchsiaSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterRunnerSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterRunnerDebugSymbols' is not required, skipping update.
+[  +96 ms] executing: /Users/admin/Library/Android/sdk/platform-tools/adb devices -l
+[        ] executing: xcrun xcdevice list --timeout 2
+[  +13 ms] xcrun simctl list devices booted iOS --json
+[        ] executing: xcrun simctl list devices booted iOS --json
+[   +9 ms] executing: xcrun simctl list devices booted
+[ +318 ms] Exit code 0 from: xcrun simctl list devices booted
+[   +1 ms] == Devices ==
+           -- iOS 15.5 --
+               iPhone 11 (A45585BA-33BA-4AC2-BA75-46435BE15E24) (Booted) 
+           -- iOS 17.2 --
+[ +158 ms] List of devices attached
+[ +310 ms] {
+             "devices" : {
+               "com.apple.CoreSimulator.SimRuntime.iOS-17-2" : [
+
+               ],
+               "com.apple.CoreSimulator.SimRuntime.iOS-15-5" : [
+                 {
+                   "lastBootedAt" : "2025-05-12T22:58:40Z",
+                   "dataPath" : "\/Users\/admin\/Library\/Developer\/CoreSimulator\/Devices\/A45585BA-33BA-4AC2-BA75-46435BE15E24\/data",
+                   "dataPathSize" : 1251803136,
+                   "logPath" : "\/Users\/admin\/Library\/Logs\/CoreSimulator\/A45585BA-33BA-4AC2-BA75-46435BE15E24",
+                   "udid" : "A45585BA-33BA-4AC2-BA75-46435BE15E24",
+                   "isAvailable" : true,
+                   "logPathSize" : 491520,
+                   "deviceTypeIdentifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-11",
+                   "state" : "Booted",
+                   "name" : "iPhone 11"
+                 }
+               ]
+             }
+           }
+[  +16 ms] Artifact Instance of 'AndroidGenSnapshotArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'AndroidInternalBuildArtifacts' is not required, skipping update.
+[   +3 ms] Artifact Instance of 'FlutterWebSdk' is not required, skipping update.
+[        ] Artifact Instance of 'LegacyCanvasKitRemover' is not required, skipping update.
+[   +2 ms] Artifact Instance of 'WindowsEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'MacOSEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'LinuxEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'LinuxFuchsiaSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'MacOSFuchsiaSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterRunnerSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterRunnerDebugSymbols' is not required, skipping update.
+[  +43 ms] Changing current working directory to: /Users/admin/development/projects/greatly_user
+[  +26 ms] "flutter run" took 1,583ms.
+[ +226 ms] Target file "lib/main.dart" not found.
+[   +3 ms] 
+           #0      FlutterCommand.validateCommand (package:flutter_tools/src/runner/flutter_command.dart:1899:9)
+           #1      RunCommand.validateCommand (package:flutter_tools/src/commands/run.dart:617:19)
+           #2      FlutterCommand.verifyThenRunCommand (package:flutter_tools/src/runner/flutter_command.dart:1752:11)
+           <asynchronous suspension>
+           #3      FlutterCommand.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command.dart:1450:27)
+           <asynchronous suspension>
+           #4      AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:153:19)
+           <asynchronous suspension>
+           #5      CommandRunner.runCommand (package:args/command_runner.dart:212:13)
+           <asynchronous suspension>
+           #6      FlutterCommandRunner.runCommand.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:421:9)
+           <asynchronous suspension>
+           #7      AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:153:19)
+           <asynchronous suspension>
+           #8      FlutterCommandRunner.runCommand (package:flutter_tools/src/runner/flutter_command_runner.dart:364:5)
+           <asynchronous suspension>
+           #9      run.<anonymous closure>.<anonymous closure> (package:flutter_tools/runner.dart:131:9)
+           <asynchronous suspension>
+           #10     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:153:19)
+           <asynchronous suspension>
+           #11     main (package:flutter_tools/executable.dart:94:3)
+           <asynchronous suspension>
+
+
+[ +315 ms] ensureAnalyticsSent: 298ms
+[        ] Running 1 shutdown hook
+[   +1 ms] Shutdown hooks complete
+[ +275 ms] exiting with code 1

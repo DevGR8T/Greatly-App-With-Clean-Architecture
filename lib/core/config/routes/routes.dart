@@ -19,6 +19,7 @@ class AppRouter {
   static const String onboarding = '/onboarding'; // Route for the onboarding page
   static const String main = '/main'; // Route for the main page
   static const String shop = '/shop'; // Route for the shop page
+  
 
 
   /// Generates routes based on the route name.
@@ -48,6 +49,7 @@ class AppRouter {
         case shop:
         // Navigate to the mainpage
         return MaterialPageRoute(builder: (_) => ShopPage());
+       
       default:
         // Default route if no match is found
         return MaterialPageRoute(builder: (_) => LoginPage());

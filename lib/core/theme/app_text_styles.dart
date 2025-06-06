@@ -91,4 +91,11 @@ class AppTextStyles {
     fontWeight: FontWeight.w500,
     color: Colors.grey,
   );
+
+  // Text style for buttons
+  static const TextStyle button = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+    color: Colors.white, // Default button text color
+  );
 }

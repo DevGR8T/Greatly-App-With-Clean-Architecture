@@ -167,8 +167,17 @@ class _ShopPageState extends State<ShopPage> {
     );
   }
 
-  Widget _buildProductList() {
-    return BlocBuilder<ProductBloc, ProductState>(
+Widget _buildProductList() {
+  return RefreshIndicator(
+    onRefresh: () async {
+      // Trigger product fetching to refresh the list
+      context.read<ProductBloc>().add(GetProducts(
+            query: _searchQuery,
+            categoryId: _selectedCategory?.id,
+            sortOption: _sortOption,
+          ));
+    },
+    child: BlocBuilder<ProductBloc, ProductState>(
       builder: (context, state) {
         if (state is ProductInitial) {
           return const Center(child: CircularProgressIndicator());
@@ -206,6 +215,7 @@ class _ShopPageState extends State<ShopPage> {
         }
         return const Center(child: CircularProgressIndicator());
       },
-    );
-  }
+    ),
+  );
+}
 }

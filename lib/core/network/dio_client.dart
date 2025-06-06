@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import '../config/env/env_config.dart';
+import 'interceptors/auth_interceptor.dart';
 
 /// A Dio client for making HTTP requests.
 class DioClient {
@@ -10,10 +11,24 @@ class DioClient {
   DioClient(this._dio, this._envConfig) {
     _dio
       ..options.baseUrl = _envConfig.apiUrl // Set the base URL.
-      ..options.connectTimeout = const Duration(seconds: 30) // Connection timeout.
+      ..options.connectTimeout = const Duration(seconds: 30) // Connection timeout. 
       ..options.receiveTimeout = const Duration(seconds: 30) // Receive timeout.
-      ..options.responseType = ResponseType.json; // Default response type.
-      
+      ..options.responseType = ResponseType.json // Default response type.
+      ..options.headers = {
+        'Content-Type': 'application/json', // Default content type
+        'Accept': 'application/json',
+      }
+      // Added the Auth Interceptor here
+      ..interceptors.add(AuthInterceptor())
+      // Add logging interceptor for debugging
+      ..interceptors.add(LogInterceptor(
+        requestBody: true,
+        responseBody: true,
+        requestHeader: true,
+        responseHeader: false,
+        error: true,
+        logPrint: (obj) => print('[DIO] $obj'),
+      ));
   }
 
   /// Performs a GET request.
@@ -40,7 +55,7 @@ class DioClient {
   /// Performs a POST request.
   Future<Response> post(
     String uri, {
-    data,
+    dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
@@ -48,11 +63,39 @@ class DioClient {
     ProgressCallback? onReceiveProgress,
   }) async {
     try {
+      // Ensure proper headers for JSON requests
+      final defaultOptions = Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      );
+      
+      // Merge with provided options
+      final mergedOptions = options != null 
+        ? Options(
+            headers: {
+              ...defaultOptions.headers ?? {},
+              ...options.headers ?? {},
+            },
+            method: options.method ?? defaultOptions.method,
+            sendTimeout: options.sendTimeout ?? defaultOptions.sendTimeout,
+            receiveTimeout: options.receiveTimeout ?? defaultOptions.receiveTimeout,
+            extra: options.extra ?? defaultOptions.extra,
+            followRedirects: options.followRedirects ?? defaultOptions.followRedirects,
+            maxRedirects: options.maxRedirects ?? defaultOptions.maxRedirects,
+            persistentConnection: options.persistentConnection ?? defaultOptions.persistentConnection,
+            requestEncoder: options.requestEncoder ?? defaultOptions.requestEncoder,
+            responseDecoder: options.responseDecoder ?? defaultOptions.responseDecoder,
+            listFormat: options.listFormat ?? defaultOptions.listFormat,
+          )
+        : defaultOptions;
+      
       return await _dio.post(
         uri,
         data: data,
         queryParameters: queryParameters,
-        options: options,
+        options: mergedOptions,
         cancelToken: cancelToken,
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
@@ -65,7 +108,7 @@ class DioClient {
   /// Performs a PUT request.
   Future<Response> put(
     String uri, {
-    data,
+    dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
@@ -73,11 +116,28 @@ class DioClient {
     ProgressCallback? onReceiveProgress,
   }) async {
     try {
+      // Ensure proper headers for JSON requests
+      final defaultOptions = Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      );
+      
+      final mergedOptions = options != null 
+        ? Options(
+            headers: {
+              ...defaultOptions.headers ?? {},
+              ...options.headers ?? {},
+            },
+          )
+        : defaultOptions;
+      
       return await _dio.put(
         uri,
         data: data,
         queryParameters: queryParameters,
-        options: options,
+        options: mergedOptions,
         cancelToken: cancelToken,
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
@@ -90,6 +150,7 @@ class DioClient {
   /// Performs a DELETE request.
   Future<Response> delete(
     String uri, {
+    dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
@@ -97,6 +158,7 @@ class DioClient {
     try {
       return await _dio.delete(
         uri,
+        data: data,
         queryParameters: queryParameters,
         options: options,
         cancelToken: cancelToken,

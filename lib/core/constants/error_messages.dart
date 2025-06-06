@@ -25,4 +25,28 @@ class ErrorMessages {
   static const String noEmailFound = 'No email found. Use a different account.';
 
   static const String emailNotVerified = 'Please Verify your email to log in.';
+
+    /// Retrieves the error message based on the provided key.
+  static String getErrorMessage(String key) {
+    switch (key) {
+      case 'invalid-credentials':
+        return invalidCredentials;
+      case 'user-not-found':
+        return userNotFound;
+      case 'email-already-in-use':
+        return emailAlreadyInUse;
+      case 'google-registration-failed':
+        return googleRegistrationFailed;
+      case 'sign-in-canceled':
+        return signInCanceled;
+      case 'network-error':
+        return networkError;
+      case 'no-email-found':
+        return noEmailFound;
+      case 'email-not-verified':
+        return emailNotVerified;
+      default:
+        return unexpectedError;
+    }
+  }
 }

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:greatly_user/core/theme/app_colors.dart';
+import 'package:greatly_user/features/cart/presentation/pages/cart_page.dart';
 import 'package:greatly_user/features/main/presentation/bloc/navigation_bloc.dart';
 import 'package:greatly_user/features/home/presentation/pages/homepage.dart';
 import 'package:greatly_user/features/main/presentation/bloc/navigation_event.dart';
 import 'package:greatly_user/features/main/presentation/bloc/navigation_state.dart';
 import 'package:greatly_user/features/main/presentation/widgets/bottom_navigation_bar.dart';
 import 'package:greatly_user/features/products/presentation/pages/shop_page.dart';
-
-
 
 /// The main page of the app that manages navigation between different tabs.
 class MainPage extends StatelessWidget {
@@ -17,7 +17,7 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-       create: (_) => GetIt.I<NavigationBloc>(), // Use GetIt to retrieve NavigationBloc
+      create: (_) => GetIt.I<NavigationBloc>(), // Use GetIt to retrieve NavigationBloc
       child: const MainView(),
     );
   }
@@ -35,9 +35,9 @@ class _MainViewState extends State<MainView> {
   // List of screens for each tab in the bottom navigation bar.
   final List<Widget> _screens = [
     const HomePage(), // Home page
-   const ShopPage(showBackButton: false,), // shop page
-   // const CartPage(), // Cart page
-   // const ProfilePage(), // Profile page
+    const ShopPage(showBackButton: false), // shop page
+    const CartPage(), // Cart page
+    // const ProfilePage(), // Profile page
   ];
 
   @override
@@ -46,9 +46,25 @@ class _MainViewState extends State<MainView> {
       builder: (context, state) {
         return Scaffold(
           // Displays the current screen based on the selected tab.
-          body: IndexedStack(
-            index: state.currentIndex, // Current tab index
-            children: _screens, // List of screens
+          body: Stack(
+            children: [
+              // The screen content
+              IndexedStack(
+                index: state.currentIndex, // Current tab index
+                children: _screens, // List of screens
+              ),
+              
+              // Loading indicator overlay
+              if (state.isLoading)
+                Container(
+                  color: Colors.black.withOpacity(0.3),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.surface,
+                    ),
+                  ),
+                ),
+            ],
           ),
           // Custom bottom navigation bar for tab navigation.
           bottomNavigationBar: CustomBottomNavigationBar(

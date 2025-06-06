@@ -61,6 +61,7 @@ class Strings {
   static const String onboardingRoute = '/onboarding';
    static const String mainRoute = '/main';
    static const String shopRoute = '/shop';
+  static const String productDetailRoute = '/product-detail';
   // APIs
   static const String appName = 'greatly';
   static const String apiBaseUrl = 'http://192.168.43.128:1337/api'; // Fixed Base URL for API requests
