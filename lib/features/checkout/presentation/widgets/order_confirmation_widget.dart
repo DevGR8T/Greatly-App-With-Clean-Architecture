@@ -1,12 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:greatly_user/services/notification_manager.dart';
+// Import your notification manager
+// import 'path/to/notification_manager.dart';
 
-class OrderConfirmationWidget extends StatelessWidget {
+class OrderConfirmationWidget extends StatefulWidget {
   final String orderId;
 
   const OrderConfirmationWidget({
     Key? key,
     required this.orderId,
   }) : super(key: key);
+
+  @override
+  State<OrderConfirmationWidget> createState() => _OrderConfirmationWidgetState();
+}
+
+class _OrderConfirmationWidgetState extends State<OrderConfirmationWidget> {
+  
+  @override
+  void initState() {
+    super.initState();
+    // Simply call the notification manager - it handles all the complexity
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _sendOrderConfirmationNotification();
+    });
+  }
+
+  Future<void> _sendOrderConfirmationNotification() async {
+    try {
+      // Use the notification manager instead of handling tokens directly
+      await NotificationManager().sendOrderConfirmationNotification(widget.orderId);
+    } catch (e) {
+      print('Error sending notification: $e');
+      // Error is handled gracefully by the notification manager
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +99,7 @@ class OrderConfirmationWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _buildInfoRow('Order ID:', orderId),
+          _buildInfoRow('Order ID:', widget.orderId),
           const Divider(height: 20),
           _buildInfoRow('Date:', _getCurrentDateFormatted()),
           const Divider(height: 20),

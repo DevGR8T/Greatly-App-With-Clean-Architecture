@@ -49,6 +49,7 @@ class MyApp extends StatelessWidget {
            // NavigationBloc for managing bottom navigation state
         BlocProvider(create: (context) => getIt<NavigationBloc>()),
 
+        // ReviewBloc for managing product reviews
         BlocProvider(create: (context) => getIt<ReviewBloc>()),
       ],
       child: MaterialApp(

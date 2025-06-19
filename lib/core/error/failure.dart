@@ -52,3 +52,7 @@ class GeneralFailure extends Failure {
   const GeneralFailure(String message) : super(message);
   
 }
+/// Represents a failure related to notifications.
+class NotificationFailure extends Failure {
+  const NotificationFailure(String message) : super(message);
+}

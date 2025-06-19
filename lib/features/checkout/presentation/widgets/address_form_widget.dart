@@ -34,23 +34,24 @@ class _AddressFormWidgetState extends State<AddressFormWidget> {
   bool _isDefault = false;
 
   @override
-void initState() {
-  super.initState();
+  void initState() {
+    super.initState();
 
-  // Populate fields if editing an existing address
-  if (widget.addressToEdit != null) {
-    _streetAddressController.text = widget.addressToEdit!.streetAddress;
-    _additionalInfoController.text = widget.addressToEdit!.apartmentSuite ?? '';
-    _cityController.text = widget.addressToEdit!.city;
-    _stateController.text = widget.addressToEdit!.stateProvince;
-    _postalCodeController.text = widget.addressToEdit!.postalCode;
-    _countryController.text = widget.addressToEdit!.country;
-    _isDefault = widget.addressToEdit!.isDefault;
-  } else {
-    // Default country selection
-    _countryController.text = 'United States';
+    // Populate fields if editing an existing address
+    if (widget.addressToEdit != null) {
+      _streetAddressController.text = widget.addressToEdit!.streetAddress;
+      _additionalInfoController.text =
+          widget.addressToEdit!.apartmentSuite ?? '';
+      _cityController.text = widget.addressToEdit!.city;
+      _stateController.text = widget.addressToEdit!.stateProvince;
+      _postalCodeController.text = widget.addressToEdit!.postalCode;
+      _countryController.text = widget.addressToEdit!.country;
+      _isDefault = widget.addressToEdit!.isDefault;
+    } else {
+      // Default country selection
+      _countryController.text = 'United States';
+    }
   }
-}
 
   @override
   void dispose() {
@@ -111,8 +112,11 @@ void initState() {
         }
         if (state is AddressSaveFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to save address: ${state.message}'),duration: Duration(seconds: 1),backgroundColor: AppColors.error,),
-            
+            SnackBar(
+              content: Text('Failed to save address: ${state.message}'),
+              duration: Duration(seconds: 1),
+              backgroundColor: AppColors.error,
+            ),
           );
         }
       },

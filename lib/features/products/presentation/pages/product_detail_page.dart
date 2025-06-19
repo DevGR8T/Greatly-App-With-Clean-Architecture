@@ -111,11 +111,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           icon: const Icon(Icons.favorite_border),
           onPressed: () {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Added to wishlist'),
-                backgroundColor: AppColors.success,
-                duration: Duration(seconds: 1),
-              ),
+              const SnackBar(content: Text('Added to wishlist'),backgroundColor: AppColors.success,duration: Duration(seconds: 1),),
             );
           },
         ),
@@ -131,7 +127,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
- 
+  /// Builds the product image carousel with thumbnails like in the first image
   /// Builds the product image carousel with thumbnails
   Widget _buildProductImages(Product product) {
     final List<String> images = product.images.isNotEmpty

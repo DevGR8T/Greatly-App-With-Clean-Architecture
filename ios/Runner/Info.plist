@@ -56,5 +56,17 @@
             </array>
         </dict>
     </array>
+    <!-- Firebase Configuration -->
+    <key>FirebaseAppDelegateProxyEnabled</key>
+    <true/>
+    <key>FirebaseMessagingAutoInitEnabled</key>
+    <true/>
+    <!-- Background modes for notifications -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>fetch</string>
+        <string>remote-notification</string>
+        <string>background-processing</string>
+    </array>
 </dict>
 </plist>

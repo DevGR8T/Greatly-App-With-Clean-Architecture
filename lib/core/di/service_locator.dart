@@ -316,6 +316,8 @@ getIt.registerLazySingleton(() => GetProductByIdUseCase(getIt()));
   getIt.registerLazySingleton(() => AddPaymentMethod(getIt()));
   getIt.registerLazySingleton(() => DeletePaymentMethod(getIt()));
 
+  
+
   // Stripe use case
   getIt.registerLazySingleton(() => CreateStripePortalSession(getIt()));
   
