@@ -13,6 +13,7 @@ import 'features/checkout/presentation/bloc/checkout_bloc.dart';
 import 'features/main/presentation/bloc/navigation_bloc.dart';
 import 'features/onboarding/presentation/bloc/onboarding_bloc.dart';
 import 'features/home/presentation/bloc/home_bloc.dart';
+import 'features/profile/presentation/bloc/profile_bloc.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -51,10 +52,13 @@ class MyApp extends StatelessWidget {
 
         // ReviewBloc for managing product reviews
         BlocProvider(create: (context) => getIt<ReviewBloc>()),
+
+        //ProfileBloc for managing user profile state
+        BlocProvider(create: (context) => getIt<ProfileBloc>()),
       ],
       child: MaterialApp(
         theme: appTheme(), // Apply the app's theme
-        initialRoute: AppRouter.login, // Set the initial route to the main screen
+        initialRoute: AppRouter.splash, // Set the initial route to the main screen
         onGenerateRoute: AppRouter.onGenerateRoute, // Handle route generation
       ),
     );

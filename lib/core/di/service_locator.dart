@@ -90,6 +90,16 @@ import '../../features/home/data/datasources/remote/featured_remote_data_source.
 import '../../features/home/domain/repositories/featured_product_repository.dart';
 import '../../features/onboarding/domain/usecases/is_onboarding_completed_usecase.dart';
 import '../../features/products/data/datasources/remote/product_remote_data_source.dart';
+import '../../features/profile/data/datasources/local/profile_local_data_source.dart';
+import '../../features/profile/data/datasources/remote/profile_remote_datasources.dart';
+import '../../features/profile/data/repositories/profile_repository_impl.dart';
+import '../../features/profile/domain/repositories/profile_repositories.dart';
+import '../../features/profile/domain/usecases/delete_profile_picture_usecase.dart';
+import '../../features/profile/domain/usecases/get_profile_usecase.dart';
+import '../../features/profile/domain/usecases/logout_usecase.dart';
+import '../../features/profile/domain/usecases/update_profile_usecase.dart';
+import '../../features/profile/domain/usecases/upload_profile_picture_usecase.dart';
+import '../../features/profile/presentation/bloc/profile_bloc.dart';
 import '../../features/reviews/data/repositories/review_repository_impl.dart';
 import '../../features/reviews/domain/repositories/review_repository.dart';
 import '../network/dio_client.dart';
@@ -114,7 +124,8 @@ void configureDependencies() => getIt.init();
 
 /// Registers environment configuration
 void registerEnvConfig() {
-  getIt.registerLazySingleton<EnvConfig>(() => DevConfig()); // Use DevConfig for development
+  getIt.registerLazySingleton<EnvConfig>(
+      () => DevConfig()); // Use DevConfig for development
 }
 
 // Register DioClient with AuthInterceptor
@@ -128,20 +139,21 @@ DioClient provideDioClient(Dio dio, EnvConfig envConfig) {
   return DioClient(dio, envConfig);
 }
 
-
 /// Registers repositories and their dependencies
 Future<void> registerRepositories() async {
   // SharedPreferences instance
   final sharedPreferences = await SharedPreferences.getInstance();
   getIt.registerSingleton<SharedPreferences>(sharedPreferences);
 
+//Register Firebase instances
+  getIt.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
+
   // Register DioClient
   getIt.registerLazySingleton<DioClient>(() => DioClient(Dio(), getIt()));
 
-    // Register NetworkInfo
+  // Register NetworkInfo
   getIt.registerLazySingleton<NetworkInfo>(
       () => NetworkInfoImpl(InternetConnectionChecker()));
-
 
   // Data sources
   getIt.registerFactory<AuthRemoteDataSource>(
@@ -153,20 +165,20 @@ Future<void> registerRepositories() async {
   getIt.registerLazySingleton<FeaturedProductsRemoteDataSource>(
       () => FeaturedProductsRemoteDataSourceImpl(getIt()));
 
-      getIt.registerLazySingleton<CategoryRemoteDataSource>(
+  getIt.registerLazySingleton<CategoryRemoteDataSource>(
     () => CategoryRemoteDataSourceImpl(
       getIt(),
     ),
   );
 
- getIt.registerLazySingleton<ProductRemoteDataSource>(
+  getIt.registerLazySingleton<ProductRemoteDataSource>(
     () => ProductRemoteDataSourceImpl(
       getIt<DioClient>(),
       getIt<ReviewRemoteDataSource>(),
     ),
   );
 
-getIt.registerLazySingleton<ReviewRemoteDataSource>(
+  getIt.registerLazySingleton<ReviewRemoteDataSource>(
     () => ReviewRemoteDataSourceImpl(
       getIt(),
     ),
@@ -176,7 +188,19 @@ getIt.registerLazySingleton<ReviewRemoteDataSource>(
     () => CartRemoteDataSourceImpl(dioClient: getIt()),
   );
 
-      
+  getIt.registerLazySingleton<ProfileLocalDataSource>(
+    () => ProfileLocalDataSourceImpl(
+      sharedPreferences: getIt<SharedPreferences>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<ProfileRemoteDataSource>(
+    () => ProfileRemoteDataSourceImpl(
+      dioClient: getIt<DioClient>(),
+      firebaseAuth: getIt<FirebaseAuth>(),
+      envConfig: getIt<EnvConfig>(),
+    ),
+  );
 
   // Repositories(DATA)
   getIt.registerFactory<AuthRepository>(() => AuthRepositoryImpl(
@@ -184,11 +208,10 @@ getIt.registerLazySingleton<ReviewRemoteDataSource>(
         getIt<AuthFirestoreDataSource>(),
       ));
 
-  getIt.registerLazySingleton<BannerRepository>(
-      () => BannerRepositoryImpl(
-            remoteDataSource: getIt(),
-            networkInfo: getIt(),
-          ));
+  getIt.registerLazySingleton<BannerRepository>(() => BannerRepositoryImpl(
+        remoteDataSource: getIt(),
+        networkInfo: getIt(),
+      ));
 
   getIt.registerLazySingleton<FeaturedProductsRepository>(
       () => FeaturedProductsRepositoryImpl(
@@ -196,13 +219,13 @@ getIt.registerLazySingleton<ReviewRemoteDataSource>(
             networkInfo: getIt(),
           ));
 
-           getIt.registerLazySingleton<CategoryRepository>(
+  getIt.registerLazySingleton<CategoryRepository>(
     () => CategoryRepositoryImpl(
       remoteDataSource: getIt(),
       networkInfo: getIt(),
     ),
   );
-  
+
   getIt.registerLazySingleton<ProductRepository>(
     () => ProductRepositoryImpl(
       remoteDataSource: getIt(),
@@ -217,14 +240,13 @@ getIt.registerLazySingleton<ReviewRemoteDataSource>(
     ),
   );
 
-   getIt.registerLazySingleton<CartRepository>(
+  getIt.registerLazySingleton<CartRepository>(
     () => CartRepositoryImpl(
       remoteDataSource: getIt(),
       localDataSource: getIt(),
       networkInfo: getIt(),
     ),
   );
-
 
   // Register CartLocalDataSource
   getIt.registerLazySingleton<CartLocalDataSource>(
@@ -233,20 +255,26 @@ getIt.registerLazySingleton<ReviewRemoteDataSource>(
 
 // Register CheckoutRemoteDataSource and CheckoutRepository
   getIt.registerLazySingleton<CheckoutRemoteDataSource>(
-  () => CheckoutRemoteDataSourceImpl(
-    dioClient: getIt<DioClient>(),
-    firebaseAuth: FirebaseAuth.instance,
-  ),
-);
+    () => CheckoutRemoteDataSourceImpl(
+      dioClient: getIt<DioClient>(),
+      firebaseAuth: FirebaseAuth.instance,
+    ),
+  );
 
-getIt.registerLazySingleton<CheckoutRepository>(
-  () => CheckoutRepositoryImpl(
-    remoteDataSource: getIt<CheckoutRemoteDataSource>(),
-    networkInfo: getIt<NetworkInfo>(),
-  ),
-);
+  getIt.registerLazySingleton<CheckoutRepository>(
+    () => CheckoutRepositoryImpl(
+      remoteDataSource: getIt<CheckoutRemoteDataSource>(),
+      networkInfo: getIt<NetworkInfo>(),
+    ),
+  );
 
-
+  getIt.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(
+      remoteDataSource: getIt<ProfileRemoteDataSource>(),
+      localDataSource: getIt<ProfileLocalDataSource>(),
+      networkInfo: getIt<NetworkInfo>(), // if you have NetworkInfo
+    ),
+  );
 
   // Register dependencies for the Onboarding feature
   getIt.registerFactory<OnboardingLocalDataSource>(
@@ -259,34 +287,43 @@ getIt.registerLazySingleton<CheckoutRepository>(
 void registerUseCases() {
   // Authentication use cases
   getIt.registerFactory(() => LoginWithEmailUseCase(getIt<AuthRepository>()));
-  getIt.registerFactory(() => RegisterWithEmailUseCase(getIt<AuthRepository>()));
+  getIt
+      .registerFactory(() => RegisterWithEmailUseCase(getIt<AuthRepository>()));
   getIt.registerFactory(() => LogoutUseCase(getIt<AuthRepository>()));
   getIt.registerFactory(() => LoginWithGoogleUseCase(getIt<AuthRepository>()));
   getIt.registerFactory(() => LoginWithAppleUseCase(getIt<AuthRepository>()));
-  getIt.registerFactory(() => RegisterWithGoogleUseCase(getIt<AuthRepository>()));
-  getIt.registerFactory(() => RegisterWithAppleUseCase(getIt<AuthRepository>()));
-  getIt.registerFactory(() => SendPasswordResetEmailUseCase(getIt<AuthRepository>()));
-  getIt.registerFactory(() => SendEmailVerificationUseCase(getIt<AuthRepository>()));
-  getIt.registerFactory(() => CheckEmailVerificationStatusUseCase(getIt<AuthRepository>()));
+  getIt.registerFactory(
+      () => RegisterWithGoogleUseCase(getIt<AuthRepository>()));
+  getIt
+      .registerFactory(() => RegisterWithAppleUseCase(getIt<AuthRepository>()));
+  getIt.registerFactory(
+      () => SendPasswordResetEmailUseCase(getIt<AuthRepository>()));
+  getIt.registerFactory(
+      () => SendEmailVerificationUseCase(getIt<AuthRepository>()));
+  getIt.registerFactory(
+      () => CheckEmailVerificationStatusUseCase(getIt<AuthRepository>()));
   getIt.registerFactory(() => GetCurrentUserUseCase(getIt<AuthRepository>()));
 
   // onboarding use cases
-getIt.registerFactory(() => IsOnboardingCompletedUseCase(getIt<OnboardingRepository>()));
+  getIt.registerFactory(
+      () => IsOnboardingCompletedUseCase(getIt<OnboardingRepository>()));
 
   // Onboarding use cases
-  getIt.registerFactory(() => GetOnboardingItemsUseCase(getIt<OnboardingRepository>()));
-  getIt.registerFactory(() => SetOnboardingCompletedUseCase(getIt<OnboardingRepository>()));
+  getIt.registerFactory(
+      () => GetOnboardingItemsUseCase(getIt<OnboardingRepository>()));
+  getIt.registerFactory(
+      () => SetOnboardingCompletedUseCase(getIt<OnboardingRepository>()));
 
   // Home feature use cases
   getIt.registerLazySingleton(() => GetBanners(getIt()));
   getIt.registerLazySingleton(() => GetFeaturedProducts(getIt()));
 
   // Category use case
-getIt.registerLazySingleton(() => GetCategoriesUseCase(getIt()));
+  getIt.registerLazySingleton(() => GetCategoriesUseCase(getIt()));
 
 // Product use cases
-getIt.registerLazySingleton(() => GetProductsUseCase(getIt()));
-getIt.registerLazySingleton(() => GetProductByIdUseCase(getIt()));
+  getIt.registerLazySingleton(() => GetProductsUseCase(getIt()));
+  getIt.registerLazySingleton(() => GetProductByIdUseCase(getIt()));
 
   // Review use cases
   getIt.registerLazySingleton(() => GetProductReviewsUseCase(getIt()));
@@ -294,7 +331,7 @@ getIt.registerLazySingleton(() => GetProductByIdUseCase(getIt()));
   getIt.registerLazySingleton(() => SubmitReviewUseCase(getIt()));
   getIt.registerLazySingleton(() => HasUserReviewedProductUseCase(getIt()));
 
-   // Cart UseCases
+  // Cart UseCases
   getIt.registerLazySingleton(() => AddToCartUseCase(repository: getIt()));
   getIt.registerLazySingleton(() => GetCartUseCase(repository: getIt()));
   getIt.registerLazySingleton(() => UpdateCartItemUseCase(repository: getIt()));
@@ -316,13 +353,28 @@ getIt.registerLazySingleton(() => GetProductByIdUseCase(getIt()));
   getIt.registerLazySingleton(() => AddPaymentMethod(getIt()));
   getIt.registerLazySingleton(() => DeletePaymentMethod(getIt()));
 
-  
+  getIt.registerLazySingleton<GetProfileUsecase>(
+    () => GetProfileUsecase(getIt<ProfileRepository>()),
+  );
+
+  getIt.registerLazySingleton<UpdateProfileUsecase>(
+    () => UpdateProfileUsecase(getIt<ProfileRepository>()),
+  );
+
+  getIt.registerLazySingleton<UploadProfilePictureUsecase>(
+    () => UploadProfilePictureUsecase(getIt<ProfileRepository>()),
+  );
+
+  getIt.registerLazySingleton<DeleteProfilePictureUsecase>(
+    () => DeleteProfilePictureUsecase(getIt<ProfileRepository>()),
+  );
+
+  getIt.registerLazySingleton<LogoutUsecase>(
+    () => LogoutUsecase(getIt<ProfileRepository>()),
+  );
 
   // Stripe use case
   getIt.registerLazySingleton(() => CreateStripePortalSession(getIt()));
-  
-
- 
 
   // AuthService
   getIt.registerFactory(() => AuthService(
@@ -335,15 +387,18 @@ getIt.registerLazySingleton(() => GetProductByIdUseCase(getIt()));
         registerWithAppleUseCase: getIt<RegisterWithAppleUseCase>(),
         sendPasswordResetEmailUseCase: getIt<SendPasswordResetEmailUseCase>(),
         sendEmailVerificationUseCase: getIt<SendEmailVerificationUseCase>(),
-        checkEmailVerificationStatusUseCase: getIt<CheckEmailVerificationStatusUseCase>(),
-        getCurrentUserUseCase: getIt<GetCurrentUserUseCase>(), 
+        checkEmailVerificationStatusUseCase:
+            getIt<CheckEmailVerificationStatusUseCase>(),
+        getCurrentUserUseCase: getIt<GetCurrentUserUseCase>(),
       ));
 }
 
 /// Registers BLoCs for dependency injection
 void registerBlocs() {
   // Authentication BLoC
-  getIt.registerFactory<AuthBloc>(() => AuthBloc(authService: getIt<AuthService>(), isOnboardingCompletedUseCase: getIt<IsOnboardingCompletedUseCase>()));
+  getIt.registerFactory<AuthBloc>(() => AuthBloc(
+      authService: getIt<AuthService>(),
+      isOnboardingCompletedUseCase: getIt<IsOnboardingCompletedUseCase>()));
 
   // Splash BLoC
   getIt.registerFactory(() => SplashBloc(getIt()));
@@ -361,13 +416,13 @@ void registerBlocs() {
       ));
 
   // Category BLoC
-  getIt.registerFactory(()=>CategoryBloc(getCategoriesUseCase: getIt()));
+  getIt.registerFactory(() => CategoryBloc(getCategoriesUseCase: getIt()));
 
   //  product BLoC
   getIt.registerFactory(() => ProductBloc(
-      getProductsUseCase: getIt(),
-      getProductByIdUseCase: getIt(),
-    ));
+        getProductsUseCase: getIt(),
+        getProductByIdUseCase: getIt(),
+      ));
 
   // Review BLoC
   getIt.registerFactory(() => ReviewBloc(
@@ -377,7 +432,7 @@ void registerBlocs() {
         submitReview: getIt(),
       ));
 
-      //Cart BLoC
+  //Cart BLoC
   getIt.registerFactory(() => CartBloc(
         getCartUseCase: getIt(),
         addToCartUseCase: getIt(),
@@ -387,7 +442,7 @@ void registerBlocs() {
         syncOfflineCartActionsUseCase: getIt(),
       ));
 
- // Checkout BLoC
+  // Checkout BLoC
   getIt.registerFactory(() => CheckoutBloc(
         saveAddress: getIt(),
         getSavedAddresses: getIt(),
@@ -404,7 +459,14 @@ void registerBlocs() {
         createStripePortalSession: getIt(),
       ));
 
-   // Navigation BLoC
-  getIt.registerFactory(() => NavigationBloc());
+  getIt.registerFactory(() => ProfileBloc(
+        getProfileUsecase: getIt(),
+        updateProfileUsecase: getIt(),
+        uploadProfilePictureUsecase: getIt(),
+        deleteProfilePictureUsecase: getIt(),
+        logoutUsecase: getIt(),
+      ));
 
- }
+  // Navigation BLoC
+  getIt.registerFactory(() => NavigationBloc());
+}

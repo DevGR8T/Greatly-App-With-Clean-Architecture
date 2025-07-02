@@ -68,12 +68,8 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
             // Add a delay before navigating
             await Future.delayed(Platform.isIOS ? const Duration(seconds: 6) : const Duration(seconds: 8));
             Navigator.pushReplacementNamed(context, AppRouter.login);
-          } else if (state is SplashError) {
-            // Handle error (e.g., show a snackbar)
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
           }
+          
         },
         child: Stack(
           fit: StackFit.expand,

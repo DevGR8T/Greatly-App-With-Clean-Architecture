@@ -13,7 +13,10 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       final result = await getCurrentUserUseCase();
 
       result.fold(
-        (failure) => emit(SplashError('Failed to check authentication: ${failure.message}')),
+        (failure) {
+          // FIXED: Always treat failures as unauthenticated - no error state
+          emit(SplashUnauthenticated());
+        },
         (user) {
           if (user != null && user.emailVerified) {
             emit(SplashAuthenticated());

@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'dart:io';
@@ -13,6 +13,7 @@ import 'features/notifications/data/datasources/remote/firebase_notification_ser
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
+   
   print('Handling background message: ${message.messageId}');
 }
 
@@ -23,6 +24,8 @@ void main() async {
   await Stripe.instance.applySettings();
   
   await Firebase.initializeApp();
+
+  
   
   // Initialize notification service
   await NotificationService.initialize();

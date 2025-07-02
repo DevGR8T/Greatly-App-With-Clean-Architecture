@@ -56,3 +56,8 @@ class GeneralFailure extends Failure {
 class NotificationFailure extends Failure {
   const NotificationFailure(String message) : super(message);
 }
+
+/// Represents a failure due to validation errors.
+class ValidationFailure extends Failure {
+  const ValidationFailure(String message) : super(message);
+}

@@ -12,7 +12,7 @@ import '../../../features/home/presentation/pages/homepage.dart';
 class AppRouter {
   // Route names for navigation
    static const String splash = '/splash'; // Add splash route
-  static const String login = '/'; // Default route for the login page
+  static const String login = '/login'; // Default route for the login page
   static const String register = '/register'; // Route for the registration page
   static const String home = '/home'; // Route for the home page
   static const String passwordReset = '/password-reset'; // Route for the forgot password page
@@ -52,7 +52,7 @@ class AppRouter {
        
       default:
         // Default route if no match is found
-        return MaterialPageRoute(builder: (_) => LoginPage());
+        return MaterialPageRoute(builder: (_) => MainView());
     }
   }
 }

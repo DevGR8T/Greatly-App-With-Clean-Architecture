@@ -1,7 +1,11 @@
 /// Exception for server-related errors.
 class ServerException implements Exception {
-  final String message; // Error message.
-  ServerException(this.message,);
+  final String message;
+  
+  const ServerException(this.message);
+  
+  @override
+  String toString() => 'ServerException: $message';
 }
 
 /// Exception for cache-related errors.
@@ -41,3 +45,5 @@ class AuthException implements Exception {
   final String message; // Error message.
   AuthException(this.message);
 }
+
+

@@ -10,6 +10,8 @@ import 'package:greatly_user/features/main/presentation/bloc/navigation_state.da
 import 'package:greatly_user/features/main/presentation/widgets/bottom_navigation_bar.dart';
 import 'package:greatly_user/features/products/presentation/pages/shop_page.dart';
 
+import '../../../profile/presentation/pages/profile_page.dart';
+
 /// The main page of the app that manages navigation between different tabs.
 class MainPage extends StatelessWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -37,7 +39,7 @@ class _MainViewState extends State<MainView> {
     const HomePage(), // Home page
     const ShopPage(showBackButton: false), // shop page
     const CartPage(), // Cart page
-    // const ProfilePage(), // Profile page
+     const ProfilePage(), // Profile page
   ];
 
   @override
