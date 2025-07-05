@@ -11,7 +11,7 @@ import '../bloc/checkout_bloc.dart';
 import '../bloc/checkout_event.dart';
 import '../bloc/checkout_state.dart';
 import '../widgets/address_selection_widget.dart';
-import '../widgets/check_out_progress_indicator.dart';
+import '../widgets/check_out_progress_indicator.dart'; 
 import '../widgets/checkout_summary_widget.dart';
 import '../widgets/order_confirmation_widget.dart';
 import '../widgets/payment_method_selection_widget.dart';

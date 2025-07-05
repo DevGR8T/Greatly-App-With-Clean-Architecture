@@ -27,59 +27,55 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     required this.envConfig,
   });
 
-  @override
-  Future<ProfileModel> getProfile() async {
+@override
+Future<ProfileModel> getProfile() async {
+  try {
+    final user = firebaseAuth.currentUser;
+    
+    // Try to get profile from Strapi first
     try {
-      final user = firebaseAuth.currentUser;
-      if (user == null) {
-        throw  AuthException('User not authenticated');
-      }
-
-      // Try to get profile from Strapi first
-      try {
-        final response = await dioClient.get('/users/me?populate=profilePicture');
+      final response = await dioClient.get('/users/me?populate=profilePicture');
+      
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data as Map<String, dynamic>;
         
-        if (response.statusCode == 200 && response.data != null) {
-          final data = response.data as Map<String, dynamic>;
-          
-          // Combine Firebase user data with Strapi profile data
-          final profileData = {
-            'id': data['id']?.toString() ?? user.uid,
-            'email': user.email ?? data['email'] ?? '',
-            'username': data['username'] ?? user.displayName ?? _extractUsernameFromEmail(user.email),
-            'profilePicture': data['profilePicture'],
-            'isEmailVerified': user.emailVerified,
-            'createdAt': data['createdAt'] ?? user.metadata.creationTime?.toIso8601String(),
-            'updatedAt': data['updatedAt'] ?? DateTime.now().toIso8601String(),
-          };
-          
-          return ProfileModel.fromStrapiJson(profileData);
-        }
-      } catch (e) {
-        // If Strapi fails, create profile from Firebase data only
-        print('Strapi profile fetch failed, using Firebase data: $e');
+        // Combine Firebase user data with Strapi profile data
+        final profileData = {
+          'id': data['id']?.toString() ?? user?.uid ?? '',
+          'email': user?.email ?? data['email'] ?? '',
+          'username': data['username'] ?? user?.displayName ?? _extractUsernameFromEmail(user?.email),
+          'profilePicture': data['profilePicture'],
+          'isEmailVerified': user?.emailVerified ?? false,
+          'createdAt': data['createdAt'] ?? user?.metadata.creationTime?.toIso8601String(),
+          'updatedAt': data['updatedAt'] ?? DateTime.now().toIso8601String(),
+        };
+        
+        return ProfileModel.fromStrapiJson(profileData);
       }
-      
-      // Fallback to Firebase data only
-      final profileData = {
-        'id': user.uid,
-        'email': user.email ?? '',
-        'username': user.displayName ?? _extractUsernameFromEmail(user.email),
-        'profilePictureUrl': user.photoURL,
-        'isEmailVerified': user.emailVerified,
-        'createdAt': user.metadata.creationTime?.toIso8601String() ?? DateTime.now().toIso8601String(),
-        'updatedAt': DateTime.now().toIso8601String(),
-      };
-      
-      return ProfileModel.fromJson(profileData);
-      
-    } on DioException catch (e) {
-      throw _handleDioException(e);
     } catch (e) {
-      if (e is AuthException) rethrow;
-      throw ServerException('Unexpected error occurred: $e');
+      // If Strapi fails, create profile from Firebase data only
+      print('Strapi profile fetch failed, using Firebase data: $e');
     }
+    
+    // Fallback to Firebase data only (handle null user case)
+    final profileData = {
+      'id': user?.uid ?? '',
+      'email': user?.email ?? '',
+      'username': user?.displayName ?? _extractUsernameFromEmail(user?.email),
+      'profilePictureUrl': user?.photoURL,
+      'isEmailVerified': user?.emailVerified ?? false,
+      'createdAt': user?.metadata.creationTime?.toIso8601String() ?? DateTime.now().toIso8601String(),
+      'updatedAt': DateTime.now().toIso8601String(),
+    };
+    
+    return ProfileModel.fromJson(profileData);
+    
+  } on DioException catch (e) {
+    throw _handleDioException(e);
+  } catch (e) {
+    throw ServerException('Unexpected error occurred: $e');
   }
+}
 
   String _extractUsernameFromEmail(String? email) {
     if (email == null || email.isEmpty) return 'User';
