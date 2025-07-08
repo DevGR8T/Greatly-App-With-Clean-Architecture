@@ -102,6 +102,7 @@ import '../../features/profile/domain/usecases/upload_profile_picture_usecase.da
 import '../../features/profile/presentation/bloc/profile_bloc.dart';
 import '../../features/reviews/data/repositories/review_repository_impl.dart';
 import '../../features/reviews/domain/repositories/review_repository.dart';
+import '../config/env/prod_config.dart';
 import '../network/dio_client.dart';
 import '../network/network_info.dart';
 import 'service_locator.config.dart';
@@ -125,7 +126,7 @@ void configureDependencies() => getIt.init();
 /// Registers environment configuration
 void registerEnvConfig() {
   getIt.registerLazySingleton<EnvConfig>(
-      () => DevConfig()); // Use DevConfig for development
+      () => ProdConfig()); // Changed from DevConfig() to ProdConfig() for development
 }
 
 // Register DioClient with AuthInterceptor

@@ -200,7 +200,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             child: Container(color: Colors.white),
                           ),
                           errorWidget: (context, url, error) {
-                            print("Error loading thumbnail: $url - $error");
                             return Container(
                               color: Colors.grey[200],
                               child: const Icon(Icons.image_not_supported),
@@ -572,7 +571,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               itemCount: similarProducts.length,
               itemBuilder: (context, index) {
                 return SizedBox(
-                  width: 170, // Set an appropriate width for your product cards
+                  width: 150, // Set an appropriate width for your product cards
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: ProductCard(

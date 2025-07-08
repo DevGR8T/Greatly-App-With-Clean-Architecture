@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:greatly_user/features/checkout/domain/entities/address.dart';
 import 'package:injectable/injectable.dart';
 import 'package:flutter_stripe/flutter_stripe.dart' as stripe;
+import '../../../../../core/constants/strings.dart';
 import '../../../../../core/error/exceptions.dart';
 import '../../../../../core/network/dio_client.dart';
 import '../../models/address_model.dart';
@@ -953,7 +954,7 @@ Future<OrderModel> initializePayment({
       final requestData = {
         'customer_email': user.email!,
         'firebase_uid': user.uid,
-        'return_url': 'localhost:1337//payment-complete',
+        'return_url': '${Strings.imageBaseUrl}/payment-complete', // ✅ Uses production URL
       };
 
       _logInfo(

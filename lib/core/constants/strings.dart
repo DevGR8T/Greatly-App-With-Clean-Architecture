@@ -64,6 +64,9 @@ class Strings {
   static const String productDetailRoute = '/product-detail';
   // APIs
   static const String appName = 'greatly';
-  static const String apiBaseUrl = 'http://192.168.43.128:1337/api'; // Fixed Base URL for API requests
-  static const String imageBaseUrl = 'http://192.168.43.128:1337'; // Fixed Base URL for images
+  //static const String apiBaseUrl = 'http://192.168.43.128:1337/api'; // Fixed Base URL for API requests
+  //static const String imageBaseUrl = 'http://192.168.43.128:1337'; // Fixed Base URL for images
+    // ✅ Updated to production URLs
+  static const String apiBaseUrl = 'https://greatlystrapiserver-production.up.railway.app/api';
+  static const String imageBaseUrl = 'https://greatlystrapiserver-production.up.railway.app';
 }
