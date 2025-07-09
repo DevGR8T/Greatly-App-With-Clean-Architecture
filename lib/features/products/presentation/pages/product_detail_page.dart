@@ -564,14 +564,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             ),
           ),
           SizedBox(
-            height: 280, // Set an appropriate height for your product cards
+            height: 280, // Set an appropriate height for  product cards
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               scrollDirection: Axis.horizontal,
               itemCount: similarProducts.length,
               itemBuilder: (context, index) {
                 return SizedBox(
-                  width: 150, // Set an appropriate width for your product cards
+                  width: 150, // Set an appropriate width for  product cards
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: ProductCard(

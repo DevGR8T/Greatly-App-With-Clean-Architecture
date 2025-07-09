@@ -92,3 +92,8 @@ class AuthEmailVerified extends AuthState {
 class AuthEmailNotVerified extends AuthState {
   const AuthEmailNotVerified();
 }
+
+class AuthSignOutError extends AuthState {
+  final String message;
+  const AuthSignOutError(this.message);
+}

@@ -41,8 +41,8 @@ class _LoginPageState extends State<LoginPage> with SnackBarMixin {
 
   /// Handles different authentication states.
   void _handleState(BuildContext context, AuthState state) {
+   print('DEBUG: Current state: ${state.runtimeType}'); 
     dismissKeyboard(context);
-
     if (state is AuthNewUser) {
       _showSnackBar(context, Strings.welcomeAccountCreated, Colors.green);
       _navigateToMainPage(context, state.hasCompletedOnboarding);

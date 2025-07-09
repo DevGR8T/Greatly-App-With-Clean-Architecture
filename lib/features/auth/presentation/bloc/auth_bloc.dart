@@ -34,33 +34,38 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   /// Handles login with email and password.
 Future<void> _onLoginWithEmail(
     LoginWithEmail event, Emitter<AuthState> emit) async {
+  print('DEBUG: Starting login with email: ${event.email}');
   emit(AuthLoading());
   try {
     final result = await authService.loginWithEmail(event.email, event.password);
+    print('DEBUG: AuthService result type: ${result.runtimeType}');
+    
     await result.fold(
-      (failure) async => emit(AuthError(ErrorUtils.cleanErrorMessage(failure.message))),
+      (failure) async {
+        print('DEBUG: Login failed with error: ${failure.message}');
+        emit(AuthError(ErrorUtils.cleanErrorMessage(failure.message)));
+      },
       (user) async {
+        print('DEBUG: Login succeeded with user: ${user.email}');
+        print('DEBUG: User email verified: ${user.emailVerified}');
+        
         if (!user.emailVerified) {
           emit(AuthEmailNotVerified());
         } else {
-          // Check if onboarding has been completed
           final hasCompletedOnboarding = isOnboardingCompletedUseCase();
-          
-          // Make sure to await this!
           final isFirstLoginAfterVerification = await authService.isFirstLoginAfterVerification(user.id);
-          
-          // If it's first login after verification, we want to show onboarding
           final needsOnboarding = isFirstLoginAfterVerification || !hasCompletedOnboarding;
           
-          if (!emit.isDone) {  // Check if the emitter is still active
+          if (!emit.isDone) {
             emit(AuthLoggedIn(user: user, hasCompletedOnboarding: !needsOnboarding));
           }
         }
       },
     );
   } catch (e) {
+    print('DEBUG: Exception in login: $e');
     _logError('_onLoginWithEmail', e);
-    if (!emit.isDone) {  // Check if the emitter is still active
+    if (!emit.isDone) {
       emit(AuthError(ErrorUtils.cleanErrorMessage(e.toString())));
     }
   }
@@ -172,15 +177,15 @@ Future<void> _onRegisterWithApple(RegisterWithApple event, Emitter<AuthState> em
 
   /// Handles user sign-out.
   Future<void> _onSignOut(SignOut event, Emitter<AuthState> emit) async {
-    emit(AuthLoading());
-    try {
-      await authService.logout();  
-      emit(AuthInitial());
-    } catch (e) {
-      _logError('_onSignOut', e);
-      emit(AuthError(ErrorUtils.cleanErrorMessage(e.toString())));
-    }
+  emit(AuthLoading());
+  try {
+    await authService.logout();  
+    emit(AuthInitial());
+  } catch (e) {
+    _logError('_onSignOut', e);
+    emit(AuthSignOutError(ErrorUtils.cleanErrorMessage(e.toString()))); // Use specific error
   }
+}
 
   /// Handles sending a password reset email.
   Future<void> _onForgotPassword(

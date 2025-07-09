@@ -39,18 +39,15 @@ class _ProfilePageState extends State<ProfilePage> with SnackBarMixin {
           BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthInitial) {
-                // User has been logged out successfully
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/login',
-                  (route) => false, // Remove all previous routes
-                );
-                // Show success toast
-                _showToast(context, 'Successfully signed out!', Icons.check, AppColors.primary);
-              } else if (state is AuthError) {
-                // Dismiss any loading dialog first
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/login', (route) => false);
+                _showToast(context, 'Successfully signed out!', Icons.check,
+                    AppColors.primary);
+              } else if (state is AuthSignOutError) {
+                // Listen to specific sign-out error
                 Navigator.of(context, rootNavigator: true).pop();
-                // Show error toast
-                _showToast(context, 'Failed to sign out!', Icons.error, Colors.red[500]!);
+                _showToast(context, 'Failed to sign out!', Icons.error,
+                    Colors.red[500]!);
               }
             },
           ),
@@ -60,16 +57,19 @@ class _ProfilePageState extends State<ProfilePage> with SnackBarMixin {
               if (state is ProfileError) {
                 showSnackBar(context, state.message, Colors.red);
               } else if (state is ProfileUpdateSuccess) {
-                showSnackBar(context, 'Profile updated successfully', Colors.green);
+                showSnackBar(
+                    context, 'Profile updated successfully', Colors.green);
                 setState(() {
                   _isEditing = false;
                 });
                 context.read<ProfileBloc>().add(LoadProfile());
               } else if (state is ProfilePictureUploadSuccess) {
-                showSnackBar(context, 'Profile picture updated successfully', Colors.green);
+                showSnackBar(context, 'Profile picture updated successfully',
+                    Colors.green);
                 context.read<ProfileBloc>().add(LoadProfile());
               } else if (state is ProfilePictureDeleted) {
-                showSnackBar(context, 'Profile picture deleted successfully', Colors.green);
+                showSnackBar(context, 'Profile picture deleted successfully',
+                    Colors.green);
                 context.read<ProfileBloc>().add(LoadProfile());
               }
             },
@@ -133,10 +133,14 @@ class _ProfilePageState extends State<ProfilePage> with SnackBarMixin {
                         imageUrl: state.profile.profilePictureUrl,
                         isEditable: _isEditing,
                         onImageSelected: (file) {
-                          context.read<ProfileBloc>().add(UploadProfilePicture(file));
+                          context
+                              .read<ProfileBloc>()
+                              .add(UploadProfilePicture(file));
                         },
                         onImageDeleted: () {
-                          context.read<ProfileBloc>().add(DeleteProfilePicture());
+                          context
+                              .read<ProfileBloc>()
+                              .add(DeleteProfilePicture());
                         },
                       ),
                       const SizedBox(height: 24),
@@ -144,7 +148,9 @@ class _ProfilePageState extends State<ProfilePage> with SnackBarMixin {
                         EditProfileForm(
                           profile: state.profile,
                           onSave: (request) {
-                            context.read<ProfileBloc>().add(UpdateProfile(request));
+                            context
+                                .read<ProfileBloc>()
+                                .add(UpdateProfile(request));
                           },
                           onCancel: () {
                             setState(() {
@@ -165,7 +171,7 @@ class _ProfilePageState extends State<ProfilePage> with SnackBarMixin {
       ),
     );
   }
-  
+
   // Enhanced logout dialog similar to your reference
   void _showSignOutDialog(BuildContext context) {
     print("Showing sign out dialog");
@@ -198,7 +204,7 @@ class _ProfilePageState extends State<ProfilePage> with SnackBarMixin {
   // Method to perform the sign out process with loading indicator
   void _performSignOut(BuildContext context) {
     print("Starting sign out process");
-    
+
     // Show loading indicator
     showDialog(
       context: context,
@@ -215,7 +221,8 @@ class _ProfilePageState extends State<ProfilePage> with SnackBarMixin {
 
     // Add minimum delay and trigger sign out
     Future.wait([
-      Future.delayed(const Duration(seconds: 2)), // Ensure loading shows for at least 2 seconds
+      Future.delayed(const Duration(
+          seconds: 2)), // Ensure loading shows for at least 2 seconds
       Future(() => context.read<AuthBloc>().add(SignOut())),
     ]).then((_) {
       print("Sign out process initiated");
@@ -230,7 +237,8 @@ class _ProfilePageState extends State<ProfilePage> with SnackBarMixin {
   }
 
   // Method to show toast notifications
-  void _showToast(BuildContext context, String message, IconData icon, Color color) {
+  void _showToast(
+      BuildContext context, String message, IconData icon, Color color) {
     print("Showing toast: $message");
     DelightToastBar(
       snackbarDuration: const Duration(seconds: 2),
@@ -243,8 +251,6 @@ class _ProfilePageState extends State<ProfilePage> with SnackBarMixin {
       ),
     ).show(context);
   }
-
- 
 }
 
 class _ProfileLoadingWidget extends StatelessWidget {
