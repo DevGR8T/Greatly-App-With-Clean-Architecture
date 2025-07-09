@@ -106,7 +106,7 @@ class CartItemWidget extends StatelessWidget {
                 ),
                 errorWidget: (context, url, error) {
                   // Log the error for debugging
-                  print("Error loading cart image: $url - $error");
+
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

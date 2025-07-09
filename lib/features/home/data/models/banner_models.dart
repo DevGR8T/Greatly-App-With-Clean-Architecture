@@ -11,7 +11,7 @@ class BannerModel extends Banner {
 
   factory BannerModel.fromJson(Map<String, dynamic> json) {
   // Debug prints
-  print('Parsing banner JSON: $json');
+
   
   // Direct access instead of through "attributes"
   String imageUrl = '';
@@ -22,7 +22,7 @@ class BannerModel extends Banner {
       imageUrl = json['image']['formats']['small']['url'] ?? '';
     }
   } catch (e) {
-    print('Error parsing banner image: $e');
+
   }
   
   return BannerModel(

@@ -45,7 +45,7 @@ class ReviewRemoteDataSourceImpl implements ReviewRemoteDataSource {
   @override
   Future<List<ReviewModel>> getProductReviews(String productId) async {
     try {
-      print("Fetching reviews for product ID: $productId");
+
       final response = await dioClient.get(
         '/reviews',
         queryParameters: {
@@ -53,7 +53,7 @@ class ReviewRemoteDataSourceImpl implements ReviewRemoteDataSource {
         },
       );
       
-      print("Reviews API response structure: ${response.data.runtimeType}");
+
       
       List<dynamic> reviewsJson;
       // Handle different response structures
@@ -64,21 +64,21 @@ class ReviewRemoteDataSourceImpl implements ReviewRemoteDataSource {
         // Direct array response
         reviewsJson = response.data;
       } else {
-        print("Unexpected response format: ${response.data}");
+
         reviewsJson = [];
       }
       
       final reviews = reviewsJson.map((json) => ReviewModel.fromStrapiJson(json)).toList();
       
       // Log parsed reviews
-      print("Parsed ${reviews.length} reviews");
+
       for (var review in reviews) {
-        print("Parsed review - ID: ${review.id}, User: ${review.userName}, Rating: ${review.rating}, Comment: ${review.comment}");
+
       }
       
       return reviews;
     } catch (e) {
-      print("Error fetching reviews: $e");
+
       return [];
     }
   }
@@ -102,10 +102,10 @@ class ReviewRemoteDataSourceImpl implements ReviewRemoteDataSource {
       final sum = validReviews.fold<double>(0, (sum, review) => sum + review.rating);
       final average = sum / validReviews.length;
       
-      print("Calculated average rating: $average from ${validReviews.length} valid reviews");
+
       return average;
     } catch (e) {
-      print("Error calculating average rating: $e");
+
       return 0.0;
     }
   }
@@ -136,7 +136,7 @@ class ReviewRemoteDataSourceImpl implements ReviewRemoteDataSource {
       
       return 'Anonymous';
     } catch (e) {
-      print("Error getting user name: $e");
+
       return 'Anonymous';
     }
   }
@@ -169,14 +169,14 @@ class ReviewRemoteDataSourceImpl implements ReviewRemoteDataSource {
         }
       };
 
-      print("Review data being sent: $reviewData");
+
 
       final response = await dioClient.post(
         '/reviews',
         data: reviewData,
       );
 
-      print("Review submission response: ${response.data}");
+
 
       return ReviewModel(
         id: response.data?['data']?['id']?.toString() ?? 'new',
@@ -188,7 +188,7 @@ class ReviewRemoteDataSourceImpl implements ReviewRemoteDataSource {
         createdAt: DateTime.now(),
       );
     } catch (e) {
-      print("Detailed error submitting review: $e");
+
       throw ServerException('Failed to submit review: ${e.toString()}');
     }
   }

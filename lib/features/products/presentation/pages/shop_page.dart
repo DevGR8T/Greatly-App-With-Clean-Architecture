@@ -198,8 +198,8 @@ Widget _buildProductList() {
             isLoading: state.isLoading,
             scrollController: _scrollController,
             onProductSelected: (product) {
-              print('Selected product ID: ${product.id}');
-              print('About to navigate to product with ID: ${product.id}');
+
+
               
               // Dismiss the keyboard using FocusScope
               FocusScope.of(context).unfocus();

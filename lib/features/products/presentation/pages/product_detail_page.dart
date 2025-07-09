@@ -43,7 +43,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) {
-        print('Creating ProductBloc with ID: ${widget.productId}');
+
         return getIt<ProductBloc>()..add(GetProductById(id: widget.productId));
       },
       child: Scaffold(
@@ -134,7 +134,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ? product.images
         : [product.imageUrl]; // Fallback to imageUrl if images array is empty
 
-    print('Images: $images');
+
 
     return SliverToBoxAdapter(
       child: Column(
@@ -152,7 +152,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 child: Container(color: Colors.white),
               ),
               errorWidget: (context, url, error) {
-                print("Error loading image: $url - $error");
+
                 return Container(
                   color: Colors.grey[200],
                   child: Center(

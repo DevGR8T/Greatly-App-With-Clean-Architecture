@@ -188,7 +188,7 @@ Future<void> sendPasswordResetEmail(String email) async {
     throw Exception(ErrorUtils.cleanErrorMessage(e.message ?? ''));
   } catch (e) {
     // Log the error for debugging
-    print('Error sending password reset email: $e');
+
 
     // Use ErrorUtils to clean up the error message
     throw Exception(ErrorUtils.cleanErrorMessage(e.toString()));

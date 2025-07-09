@@ -31,7 +31,7 @@ class _OrderConfirmationWidgetState extends State<OrderConfirmationWidget> {
       // Use the notification manager instead of handling tokens directly
       await NotificationManager().sendOrderConfirmationNotification(widget.orderId);
     } catch (e) {
-      print('Error sending notification: $e');
+
       // Error is handled gracefully by the notification manager
     }
   }

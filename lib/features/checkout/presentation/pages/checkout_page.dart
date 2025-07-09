@@ -185,7 +185,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         body: // Replace your existing BlocConsumer listener with this fixed version
             BlocConsumer<CheckoutBloc, CheckoutState>(
           listener: (context, state) {
-            print('🎯 BlocConsumer received state: ${state.runtimeType}');
+
 
             if (state is OrderCreationError) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -230,10 +230,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 _isLoading = false;
               });
             } else if (state is AddressesLoaded) {
-              print('📍 Addresses loaded in UI: ${state.addresses.length}');
+
 
               for (var addr in state.addresses) {
-                print('📍 Address: ${addr.id} - ${addr.streetAddress}');
+
               }
 
               setState(() {
@@ -258,7 +258,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 }
               });
             } else if (state is AddressesError) {
-              print('❌ Address loading error: ${state.message}');
+
               setState(() {
                 _isLoading = false;
               });
@@ -268,12 +268,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         Text('Failed to load addresses: ${state.message}')),
               );
             } else if (state is AddressesLoading) {
-              print('⏳ Loading addresses...');
+
               setState(() {
                 _isLoading = true;
               });
             } else if (state is AddressDeleted) {
-              print('✅ Address deleted state received in UI');
+
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Address deleted successfully'),
@@ -281,7 +281,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 ),
               );
             } else if (state is AddressDeletionError) {
-              print('❌ Address deletion error: ${state.message}');
+
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                     content: Text('Error deleting address: ${state.message}')),

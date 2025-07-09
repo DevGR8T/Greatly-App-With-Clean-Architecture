@@ -37,7 +37,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
           await localDataSource.cacheProfile(remoteProfile);
         } catch (e) {
           // Don't fail if caching fails
-          print('Failed to cache profile: $e');
+
         }
         return Right(remoteProfile);
       } on ServerException catch (e) {
@@ -70,7 +70,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
           await localDataSource.cacheProfile(updatedProfile);
         } catch (e) {
           // Don't fail if caching fails
-          print('Failed to cache updated profile: $e');
+
         }
         
         return Right(updatedProfile);
@@ -132,7 +132,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
         await localDataSource.clearCachedProfile();
       } catch (e) {
         // Don't fail logout if cache clearing fails
-        print('Failed to clear cached profile during logout: $e');
+
       }
       
       return const Right(null);

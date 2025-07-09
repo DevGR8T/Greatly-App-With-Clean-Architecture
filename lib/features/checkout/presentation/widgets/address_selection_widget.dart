@@ -41,8 +41,8 @@ class _AddressSelectionWidgetState extends State<AddressSelectionWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print('🏠 AddressSelectionWidget rebuilding with ${widget.addresses.length} addresses');
-    print('🏠 Selected shipping address: ${widget.selectedShippingAddress?.id}');
+
+
     
     if (widget.isLoading) {
       return const Center(
@@ -305,7 +305,7 @@ void _showDeleteAddressDialog(BuildContext context, Address address) {
          TextButton(
            onPressed: () {
              Navigator.of(dialogContext).pop();
-             print('🗑️ Delete button pressed for address: ${address.id}');
+
              
              // Use the original context (not dialogContext) to access the bloc
              context.read<CheckoutBloc>().add(

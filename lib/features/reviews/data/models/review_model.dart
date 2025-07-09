@@ -22,7 +22,7 @@ class ReviewModel extends Review {
 
   factory ReviewModel.fromStrapiJson(Map<String, dynamic> json) {
     // Print the raw JSON for debugging
-    print('Review JSON from Strapi: $json');
+
     
     // First check if the response has attributes in the Strapi format
     // If not, use the root object directly
@@ -56,7 +56,7 @@ class ReviewModel extends Review {
           : DateTime.now();
     } catch (e) {
       createdAt = DateTime.now();
-      print('Error parsing date: $e');
+
     }
     
     // Get product ID

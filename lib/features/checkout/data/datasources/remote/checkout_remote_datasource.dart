@@ -124,19 +124,19 @@ class CheckoutRemoteDataSourceImpl implements CheckoutRemoteDataSource {
 
   /// Log informational messages for debugging and monitoring.
   void _logInfo(String method, String message, [Map<String, dynamic>? data]) {
-    print('[INFO] [$method] $message');
+
     if (data != null) {
-      print('[DATA] [$method] ${json.encode(data)}');
+
     }
   }
 
   /// Log error messages for troubleshooting, including error details and optional stack trace.
   void _logError(String method, String message, dynamic error,
       [StackTrace? stackTrace]) {
-    print('[ERROR] [$method] $message');
-    print('[ERROR] [$method] Error: $error');
+
+
     if (stackTrace != null) {
-      print('[ERROR] [$method] Stack trace: $stackTrace');
+
     }
   }
 
@@ -228,7 +228,7 @@ T _handleApiResponse<T>(
     final responseData = response.data;
     
     // Log the full response for debugging
-    print('DEBUG: Full response data: $responseData');
+
     
     // Check if it's a Strapi response with nested data
     if (responseData is Map<String, dynamic> && responseData.containsKey('data')) {

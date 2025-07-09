@@ -35,7 +35,7 @@ class CartRepositoryImpl implements CartRepository {
           return Right(remoteCart);
         } on ServerException catch (e) {
           // On server error, return the local data with warning
-          print('Server error fetching cart: ${e.message}. Using cached data.');
+
           return Right(localCart);
         }
       } else {
@@ -328,7 +328,7 @@ class CartRepositoryImpl implements CartRepository {
               }
             } catch (e) {
               // Continue processing other actions even if one fails
-              print('Error processing action ${action.type}: $e');
+
             }
           }
           

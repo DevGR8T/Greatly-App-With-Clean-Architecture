@@ -174,7 +174,7 @@ class _ProfilePageState extends State<ProfilePage> with SnackBarMixin {
 
   // Enhanced logout dialog similar to your reference
   void _showSignOutDialog(BuildContext context) {
-    print("Showing sign out dialog");
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -203,7 +203,7 @@ class _ProfilePageState extends State<ProfilePage> with SnackBarMixin {
 
   // Method to perform the sign out process with loading indicator
   void _performSignOut(BuildContext context) {
-    print("Starting sign out process");
+
 
     // Show loading indicator
     showDialog(
@@ -225,10 +225,10 @@ class _ProfilePageState extends State<ProfilePage> with SnackBarMixin {
           seconds: 2)), // Ensure loading shows for at least 2 seconds
       Future(() => context.read<AuthBloc>().add(SignOut())),
     ]).then((_) {
-      print("Sign out process initiated");
+
       // The actual completion will be handled by the BlocListener
     }).catchError((error) {
-      print("Error during sign out initiation: $error");
+
       // Dismiss loading dialog
       Navigator.of(context, rootNavigator: true).pop();
       // Show error toast
@@ -239,7 +239,7 @@ class _ProfilePageState extends State<ProfilePage> with SnackBarMixin {
   // Method to show toast notifications
   void _showToast(
       BuildContext context, String message, IconData icon, Color color) {
-    print("Showing toast: $message");
+
     DelightToastBar(
       snackbarDuration: const Duration(seconds: 2),
       autoDismiss: true,

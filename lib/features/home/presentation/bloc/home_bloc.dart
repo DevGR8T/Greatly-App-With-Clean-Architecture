@@ -22,16 +22,16 @@ Future<void> _onGetBannersEvent(
   GetBannersEvent event,
   Emitter<HomeState> emit,
 ) async {
-  print('Processing GetBannersEvent');
+
   emit(BannersLoading());
   final result = await getBanners();
   result.fold(
     (failure) {
-      print('Banner error: ${failure.message}');
+
       emit(BannersError(failure.message));
     },
     (banners) {
-      print('Banners loaded successfully: ${banners.length}');
+
       emit(BannersLoaded(banners));
     },
   );

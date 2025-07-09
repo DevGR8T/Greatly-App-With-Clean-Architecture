@@ -89,7 +89,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
             createdAt: product.createdAt,
           ));
 
-          print('Product: ${product.name}, Calculated Rating: $averageRating, Reviews: ${reviews.length}');
+
         }
 
         final hasMore = response.data['meta']?['pagination']?['hasNextPage'] ?? false;
@@ -102,7 +102,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
         throw ServerException('Failed to load products');
       }
     } catch (e) {
-      print('Exception in getProducts: $e');
+
       throw ServerException('An unexpected error occurred: $e');
     }
   }

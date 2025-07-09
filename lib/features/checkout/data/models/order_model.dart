@@ -1,7 +1,4 @@
-import '../../domain/entities/address.dart';
-import '../../domain/entities/cart_item.dart';
 import '../../domain/entities/orders.dart';
-import '../../domain/entities/payment_method.dart';
 import '../models/address_model.dart';
 import '../models/cart_item_model.dart';
 import '../models/payment_method_model.dart';
@@ -27,38 +24,38 @@ class OrderModel extends OrderEntity {
   });
 
 factory OrderModel.fromJson(Map<String, dynamic> json, {String? currentUserId}) {
-  print('🔍 DEBUG fromJson - Input JSON structure:');
-  print('🔍 JSON keys: ${json.keys.toList()}');
-  print('🔍 Full JSON: ${json.toString()}');
+
+
+
   
   // Handle the nested response structure from your payment API
   Map<String, dynamic> data;
   
   if (json.containsKey('data') && json['data'] is Map) {
     final responseData = json['data'] as Map<String, dynamic>;
-    print('🔍 Response data keys: ${responseData.keys.toList()}');
+
     
     // Check if this is the payment response format
     if (responseData.containsKey('order') && responseData['order'] is Map) {
       data = responseData['order'] as Map<String, dynamic>;
-      print('🔍 Using nested order data');
+
     } else {
       data = responseData;
-      print('🔍 Using response data directly');
+
     }
   } else if (json.containsKey('order') && json['order'] is Map) {
     // Handle case where order is at root level
     data = json['order'] as Map<String, dynamic>;
-    print('🔍 Using root level order data');
+
   } else {
     data = json;
-    print('🔍 Using raw JSON');
+
   }
   
-  print('🔍 Final data keys: ${data.keys.toList()}');
-  print('🔍 ID: ${data['id']}');
-  print('🔍 clientSecret: ${data['clientSecret']}');
-  print('🔍 paymentIntentId: ${data['paymentIntentId']}');
+
+
+
+
   
   return OrderModel(
     id: data['id']?.toString(),

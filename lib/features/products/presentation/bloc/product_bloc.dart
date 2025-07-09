@@ -25,7 +25,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ) async {
     emit(ProductInitial());
 
-    print('Getting products with sort option: ${event.sortOption?.name}');
+
 
     final backendSortOption = event.sortOption?.name == 'rating' 
         ? 'createdAt:desc'
@@ -55,9 +55,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             return a.name.compareTo(b.name);
           });
 
-          print('Products after sorting by rating:');
+
           for (var product in products) {
-            print('${product.name}: Rating = ${product.rating}');
+
           }
         }
 

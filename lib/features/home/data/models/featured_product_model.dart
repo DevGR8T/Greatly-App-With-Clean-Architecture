@@ -28,7 +28,7 @@ class FeaturedProductModel extends FeaturedProduct {
         imageUrl = json['image']['url'];
       }
     } catch (e) {
-      print('Error parsing product image: $e');
+
     }
     print('Parsed imageUrl: $imageUrl'); // Debug parsed image URL
 
@@ -41,7 +41,7 @@ class FeaturedProductModel extends FeaturedProduct {
         category = json['category']['data']['attributes']['name'] ?? '';
       }
     } catch (e) {
-      print('Error parsing product category: $e');
+
     }
 
     // Return the parsed model.

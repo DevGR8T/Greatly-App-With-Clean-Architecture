@@ -53,7 +53,7 @@ Future<void> _onFetchProductReviews(
       },
     );
   } catch (e) {
-    print("Error in _onFetchProductReviews: $e");
+
     emit(ReviewError(message: "Could not load reviews. Please try again."));
   }
 }

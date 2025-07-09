@@ -21,7 +21,7 @@ class ProductGridView extends StatelessWidget {
   Widget build(BuildContext context) {
       // Debug log to show the actual product IDs
     for (var product in products) {
-      print('Product in grid: ${product.id} - ${product.name}');
+
     }
     // Show loading grid if data is still loading
     if (isLoading) {

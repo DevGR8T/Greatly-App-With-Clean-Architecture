@@ -72,10 +72,10 @@ void dispose() {
 
     return BlocListener<CheckoutBloc, CheckoutState>(
   listener: (context, state) {
-    print('🔍 BLoC State: ${state.runtimeType}');
+
     
     if (state is PaymentMethodDeleted) {
-      print('✅ Payment method deleted successfully');
+
       
       // Cancel timeout timer
       _deletionTimer?.cancel();
@@ -102,7 +102,7 @@ void dispose() {
       // Local state already updated above
       
     } else if (state is PaymentMethodDeletionError) {
-      print('❌ Payment method deletion error: ${state.message}');
+
       
       // Cancel timeout timer
       _deletionTimer?.cancel();
@@ -121,7 +121,7 @@ void dispose() {
       }
       
     } else if (state is PaymentMethodsLoaded) {
-      print('📋 Payment methods loaded: ${state.paymentMethods.length} items');
+
       
       // Only update if not currently deleting
       if (deletingPaymentMethodId == null) {

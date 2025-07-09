@@ -78,7 +78,7 @@ List<checkout.CartItem> _convertToCheckoutCartItems(List<dynamic> cartItems) {
         selectedOptions: item.variant.isNotEmpty ? [item.variant] : null, // Optional conversion
       );
     } catch (e) {
-      print('Error converting cart item: $e');
+
       throw Exception('Failed to convert cart item: ${e.toString()}');
     }
   }).toList();

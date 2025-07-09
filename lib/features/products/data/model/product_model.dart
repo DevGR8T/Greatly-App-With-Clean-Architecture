@@ -60,17 +60,17 @@ factory ProductModel.fromJson(Map<String, dynamic> json) {
     // First check if we have a direct ID
     if (json['id'] != null) {
       id = json['id'].toString();
-      print('Found direct ID: $id');
+
     } 
     // If ID is nested in a data object
     else if (json['data'] != null && json['data']['id'] != null) {
       id = json['data']['id'].toString();
-      print('Found ID in data object: $id');
+
     }
     
-    print('Final extracted product ID: $id');
+
   } catch (e) {
-    print('Error extracting product ID: $e');
+
   }
   
   // Extract main image URL with improved handling
@@ -105,9 +105,9 @@ factory ProductModel.fromJson(Map<String, dynamic> json) {
       imageUrl = json['imageUrl'];
     }
     
-    print('Extracted main image path: $imageUrl');
+
   } catch (e) {
-    print('Error parsing product image: $e');
+
   }
   
   // Extract multiple images
@@ -120,7 +120,7 @@ factory ProductModel.fromJson(Map<String, dynamic> json) {
     
     // Print the structure of images field for debugging
     if (json['images'] != null) {
-      print('Images field structure: ${json['images']}');
+
       
       // Handle different possible structures
       if (json['images'] is List) {
@@ -156,7 +156,7 @@ factory ProductModel.fromJson(Map<String, dynamic> json) {
     
     // Check for images in attributes (alternative Strapi structure)
     if (json['attributes'] != null && json['attributes']['images'] != null) {
-      print('Attributes images field structure: ${json['attributes']['images']}');
+
       
       var attrImages = json['attributes']['images'];
       if (attrImages is List) {
@@ -184,9 +184,9 @@ factory ProductModel.fromJson(Map<String, dynamic> json) {
       }
     }
     
-    print('Successfully parsed images: $images');
+
   } catch (e) {
-    print('Error parsing multiple images: $e');
+
     // If we failed to parse multiple images, at least use the main image
     if (imageUrl.isNotEmpty && images.isEmpty) {
       images = [imageUrl];
@@ -211,7 +211,7 @@ factory ProductModel.fromJson(Map<String, dynamic> json) {
       category = CategoryModel(id: '0', name: 'Uncategorized');
     }
   } catch (e) {
-    print('Error parsing category: $e');
+
     category = CategoryModel(id: '0', name: 'Uncategorized');
   }
   
@@ -224,7 +224,7 @@ factory ProductModel.fromJson(Map<String, dynamic> json) {
       // Try alternate date format/field
       createdAt = json['created_at'] != null ? DateTime.parse(json['created_at']) : DateTime.now();
     } catch (e2) {
-      print('Error parsing date: $e2');
+
       createdAt = DateTime.now();
     }
   }
@@ -253,9 +253,9 @@ factory ProductModel.fromJson(Map<String, dynamic> json) {
     }
     
     // Debug output for rating
-    print('Extracted rating for product: ${json['name'] ?? 'Unknown'} = $rating');
+
   } catch (e) {
-    print('Error parsing rating: $e');
+
     rating = 0.0;
   }
   

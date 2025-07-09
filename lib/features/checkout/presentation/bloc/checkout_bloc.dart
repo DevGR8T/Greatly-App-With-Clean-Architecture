@@ -97,7 +97,7 @@ Future<void> _onDeleteAddress(
   DeleteAddressEvent event,
   Emitter<CheckoutState> emit,
 ) async {
-  print('🗑️ Starting address deletion: ${event.addressId}');
+
   
   try {
     final result = await deleteAddress(DeleteAddressParams(
@@ -106,14 +106,14 @@ Future<void> _onDeleteAddress(
 
     await result.fold(
       (failure) async {
-        print('❌ Address deletion failed: ${failure.message}');
+
         if (!emit.isDone) {
           emit(AddressDeletionError(failure.message));
         }
       },
       (success) async {
         if (success) {
-          print('✅ Address deletion successful');
+
           
           // Emit success state first
           if (!emit.isDone) {
@@ -125,25 +125,25 @@ Future<void> _onDeleteAddress(
             emit(AddressesLoading());
           }
           
-          print('🔄 Directly reloading addresses...');
+
           final addressesResult = await getSavedAddresses(NoParams());
           
           await addressesResult.fold(
             (failure) async {
-              print('❌ Failed to reload addresses: ${failure.message}');
+
               if (!emit.isDone) {
                 emit(AddressesError(failure.message));
               }
             },
             (addresses) async {
-              print('✅ Successfully reloaded ${addresses.length} addresses');
+
               if (!emit.isDone) {
                 emit(AddressesLoaded(addresses));
               }
             },
           );
         } else {
-          print('❌ Address deletion returned false');
+
           if (!emit.isDone) {
             emit(const AddressDeletionError('Failed to delete address'));
           }
@@ -151,7 +151,7 @@ Future<void> _onDeleteAddress(
       },
     );
   } catch (e) {
-    print('💥 Exception during address deletion: $e');
+
     if (!emit.isDone) {
       emit(AddressDeletionError('Failed to delete address: ${e.toString()}'));
     }
@@ -215,20 +215,20 @@ Future<void> _onDeleteAddress(
 ) async {
   emit(PaymentInProgress());
   
-  print('🔍 DEBUG: Starting payment process');
-  print('🔍 Order ID: ${event.order.id}');
-  print('🔍 Client Secret: ${event.order.clientSecret}');
-  print('🔍 Payment Intent ID: ${event.order.paymentIntentId}');
+
+
+
+
   
   try {
     final clientSecret = event.order.clientSecret;
     if (clientSecret == null) {
-      print('❌ ERROR: Missing client secret');
+
       emit(const PaymentError('Missing payment intent client secret'));
       return;
     }
 
-    print('🔍 Initializing payment sheet...');
+
     await stripe.Stripe.instance.initPaymentSheet(
       paymentSheetParameters: stripe.SetupPaymentSheetParameters(
         paymentIntentClientSecret: clientSecret,
@@ -236,29 +236,29 @@ Future<void> _onDeleteAddress(
         style: ThemeMode.system,
       ),
     );
-    print('✅ Payment sheet initialized');
 
-    print('🔍 Presenting payment sheet...');
+
+
     await stripe.Stripe.instance.presentPaymentSheet();
-    print('✅ Payment sheet completed successfully');
+
 
     // Payment succeeded
     if (event.order.id != null && event.order.paymentIntentId != null) {
-      print('🔍 Adding confirm payment event');
+
       add(ConfirmPaymentEvent(
         orderId: event.order.id!,
         paymentIntentId: event.order.paymentIntentId!,
       ));
     } else {
-      print('❌ ERROR: Missing order or payment intent ID');
+
       emit(const PaymentError('Missing order ID or payment intent ID'));
     }
     
   } on stripe.StripeException catch (e) {
-    print('❌ STRIPE ERROR: ${e.error.code}');
-    print('❌ STRIPE MESSAGE: ${e.error.localizedMessage}');
-    print('❌ STRIPE TYPE: ${e.error.type}');
-    print('❌ STRIPE FULL: ${e.toString()}');
+
+
+
+
     
     // Handle specific error codes
     if (e.error.code == 'PaymentSheetNotAvailable') {
@@ -274,8 +274,8 @@ Future<void> _onDeleteAddress(
     }
     
   } catch (e) {
-    print('❌ GENERAL ERROR: ${e.toString()}');
-    print('❌ ERROR TYPE: ${e.runtimeType}');
+
+
     
     emit(PaymentError('Payment error: ${e.toString()}'));
     
@@ -354,7 +354,7 @@ Future<void> _onDeletePaymentMethod(
     DeletePaymentMethodEvent event,
     Emitter<CheckoutState> emit,
   ) async {
-    print('🗑️ Starting payment method deletion: ${event.paymentMethodId}');
+
     
     try {
       // Add a small delay to ensure UI updates properly
@@ -366,23 +366,23 @@ Future<void> _onDeletePaymentMethod(
 
       result.fold(
         (failure) {
-          print('❌ Deletion failed: ${failure.message}');
+
           emit(PaymentMethodDeletionError(failure.message));
         },
         (success) {
           if (success) {
-            print('✅ Deletion successful');
+
             emit(PaymentMethodDeleted());
            add(LoadSavedPaymentMethods());
           } else {
-            print('❌ Deletion returned false');
+
             emit(const PaymentMethodDeletionError('Failed to delete payment method'));
           }
         },
       );
     } catch (e, stackTrace) {
-      print('💥 Exception during deletion: $e');
-      print('Stack trace: $stackTrace');
+
+
       emit(PaymentMethodDeletionError('Failed to delete payment method: ${e.toString()}'));
     }
   }

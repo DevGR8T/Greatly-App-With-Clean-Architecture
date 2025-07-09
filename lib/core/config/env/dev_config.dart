@@ -9,7 +9,7 @@ class DevConfig implements EnvConfig {
 
     if (Platform.isAndroid || Platform.isIOS) {
       // Use the host machine's IP for both Android and iOS devices
-      print('Running with baseUrl: http://$hostIp:1337');
+
       return 'http://$hostIp:1337';
     } else {
       // Fallback for other platforms (e.g., web)

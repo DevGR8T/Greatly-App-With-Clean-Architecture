@@ -35,7 +35,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
       };
     } catch (e) {
       // Handle token retrieval errors gracefully
-      print('Error getting auth token: $e');
+
       return {};
     }
   }

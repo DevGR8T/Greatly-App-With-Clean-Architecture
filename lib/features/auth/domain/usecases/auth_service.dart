@@ -102,7 +102,7 @@ Future<bool> isFirstLoginAfterVerification(String userId) async {
     
     return isFirstLogin;
   } catch (e) {
-    print('Error in isFirstLoginAfterVerification: $e');
+
     // Default to false if there's an error (skip onboarding)
     return false;
   }

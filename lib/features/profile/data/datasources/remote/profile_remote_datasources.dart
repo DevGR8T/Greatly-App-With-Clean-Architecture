@@ -54,7 +54,7 @@ Future<ProfileModel> getProfile() async {
       }
     } catch (e) {
       // If Strapi fails, create profile from Firebase data only
-      print('Strapi profile fetch failed, using Firebase data: $e');
+
     }
     
     // Fallback to Firebase data only (handle null user case)
@@ -106,7 +106,7 @@ Future<ProfileModel> getProfile() async {
           throw ServerException('Failed to update profile in Strapi: ${response.statusMessage}');
         }
       } catch (e) {
-        print('Strapi update failed: $e');
+
         // Continue with Firebase update even if Strapi fails
       }
 
@@ -116,7 +116,7 @@ Future<ProfileModel> getProfile() async {
           await user.updateDisplayName(request.username);
           await user.reload();
         } catch (e) {
-          print('Firebase display name update failed: $e');
+
         }
       }
 
@@ -126,7 +126,7 @@ Future<ProfileModel> getProfile() async {
           await user.updatePhotoURL(request.profilePictureUrl);
           await user.reload();
         } catch (e) {
-          print('Firebase photo URL update failed: $e');
+
         }
       }
 
@@ -168,8 +168,8 @@ Future<String> uploadProfilePicture(File imageFile) async {
       ),
     );
     
-    print('Upload response status: ${uploadResponse.statusCode}');
-    print('Upload response data: ${uploadResponse.data}');
+
+
     
     if (uploadResponse.statusCode == 201 || uploadResponse.statusCode == 200) {
       final responseData = uploadResponse.data;
@@ -181,7 +181,7 @@ Future<String> uploadProfilePicture(File imageFile) async {
         // The URL is in the 'url' field
         imageUrl = fileData['url'] as String?;
         
-        print('Extracted image URL: $imageUrl');
+
         
         if (imageUrl == null) {
           throw ServerException('No image URL returned from upload');
@@ -192,7 +192,7 @@ Future<String> uploadProfilePicture(File imageFile) async {
           imageUrl = '${envConfig.baseUrl}$imageUrl';
         }
         
-        print('Final image URL: $imageUrl');
+
         
         return imageUrl;
       } else {
@@ -202,18 +202,18 @@ Future<String> uploadProfilePicture(File imageFile) async {
       throw ServerException('Failed to upload image: ${uploadResponse.statusMessage}');
     }
   } on DioException catch (e) {
-    print('DioException: ${e.message}');
-    print('DioException response: ${e.response?.data}');
+
+
     throw ServerException('Dio error: ${e.message}');
   } on AuthException catch (e) {
-    print('AuthException: $e');
+
     rethrow;
   } on ServerException catch (e) {
-    print('ServerException caught: ${e.toString()}');
+
     rethrow;
   } catch (e) {
-    print('Unexpected exception: $e');
-    print('Exception type: ${e.runtimeType}');
+
+
     throw ServerException('Unexpected error occurred: ${e.toString()}');
   }
 }
@@ -233,7 +233,7 @@ Future<String> uploadProfilePicture(File imageFile) async {
           data: {'profilePictureUrl': null},
         );
       } catch (e) {
-        print('Strapi profile picture deletion failed: $e');
+
       }
 
       // Remove profile picture from Firebase
@@ -241,7 +241,7 @@ Future<String> uploadProfilePicture(File imageFile) async {
         await user.updatePhotoURL(null);
         await user.reload();
       } catch (e) {
-        print('Firebase photo URL removal failed: $e');
+
       }
       
     } on DioException catch (e) {

@@ -34,20 +34,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   /// Handles login with email and password.
 Future<void> _onLoginWithEmail(
     LoginWithEmail event, Emitter<AuthState> emit) async {
-  print('DEBUG: Starting login with email: ${event.email}');
+
   emit(AuthLoading());
   try {
     final result = await authService.loginWithEmail(event.email, event.password);
-    print('DEBUG: AuthService result type: ${result.runtimeType}');
+
     
     await result.fold(
       (failure) async {
-        print('DEBUG: Login failed with error: ${failure.message}');
+
         emit(AuthError(ErrorUtils.cleanErrorMessage(failure.message)));
       },
       (user) async {
-        print('DEBUG: Login succeeded with user: ${user.email}');
-        print('DEBUG: User email verified: ${user.emailVerified}');
+
+
         
         if (!user.emailVerified) {
           emit(AuthEmailNotVerified());
@@ -63,7 +63,7 @@ Future<void> _onLoginWithEmail(
       },
     );
   } catch (e) {
-    print('DEBUG: Exception in login: $e');
+
     _logError('_onLoginWithEmail', e);
     if (!emit.isDone) {
       emit(AuthError(ErrorUtils.cleanErrorMessage(e.toString())));

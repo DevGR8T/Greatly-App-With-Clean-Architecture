@@ -34,7 +34,6 @@ class NotificationManager {
       // Process any pending notifications
       await _processPendingNotifications();
     } catch (e) {
-      print('❌ NotificationManager initialization failed: $e');
     }
   }
 
@@ -48,19 +47,19 @@ class NotificationManager {
       try {
         apnsToken = await FirebaseMessaging.instance.getAPNSToken();
         if (apnsToken == null) {
-          print('🔄 APNS token attempt ${retryCount + 1}/$maxRetries');
+
           await Future.delayed(Duration(milliseconds: 300 * (retryCount + 1)));
           retryCount++;
         }
       } catch (e) {
-        print('❌ Error getting APNS token attempt ${retryCount + 1}: $e');
+
         retryCount++;
         await Future.delayed(Duration(milliseconds: 500));
       }
     }
 
     if (apnsToken != null) {
-      print('✅ APNS token ready: ${apnsToken.substring(0, 20)}...');
+
     } else {
       throw Exception('APNS token not available after $maxRetries attempts');
     }
@@ -79,7 +78,7 @@ class NotificationManager {
       await _sendNotificationToDevice(_cachedFCMToken!, notificationData);
     } else {
       // Queue notification for later processing
-      print('⏳ Queueing notification for order $orderId');
+
       _pendingNotifications.add(notificationData);
 
       // Try to initialize in background
@@ -99,7 +98,7 @@ class NotificationManager {
         await _sendNotificationToDevice(_cachedFCMToken!, notification);
         _pendingNotifications.remove(notification);
       } catch (e) {
-        print('❌ Failed to send pending notification: $e');
+
       }
     }
   }
@@ -167,11 +166,11 @@ class NotificationManager {
         print(
             '✅ Notification sent successfully for order ${notificationData['orderId']}');
       } else {
-        print('❌ Failed to send notification: ${response.body}');
+
         throw Exception('FCM API error: ${response.statusCode}');
       }
     } catch (e) {
-      print('❌ Error sending notification: $e');
+
       rethrow;
     }
   }
