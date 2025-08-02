@@ -1,6 +1,6 @@
 # GREATLY – E-COMMERCE APP
 
-Greatly is a modern e-commerce app built with Flutter for Android and iOS. It includes Firebase authentication, Stripe payments, and a Strapi backend hosted on Railway. The project follows Clean Architecture with Bloc for scalable, maintainable code.
+Greatly is a modern e-commerce app built with Flutter for Android and iOS. It features Firebase authentication, Stripe payments, and a Strapi backend. Initially deployed on Railway, the backend was later migrated to Render, demonstrating real-world deployment experience and platform flexibility. The app follows Clean Architecture with Bloc for scalable, maintainable code.
 
 ## 📱 DOWNLOAD APP
 <a href="https://github.com/DevGR8T/Greatly-App-With-Clean-Architecture/releases/latest/download/greatly_app.apk">
@@ -70,7 +70,7 @@ You can see a Demo video [Here](https://youtube.com/shorts/iP59xr_yL-s?feature=s
 • Clean state management using Bloc pattern  
 • Built with Clean Architecture (Presentation, Domain, Data)  
 • Uses service locator for easy dependency injection  
-• Strapi CMS with PostgreSQL, deployed on Railway  
+• Strapi CMS with PostgreSQL — initially deployed on Railway, now hosted on Render 
 • API calls handled with Dio and REST integration  
 • Works perfectly on both Android and iOS  
 • Light and Dark Mode support with adaptive themes  
