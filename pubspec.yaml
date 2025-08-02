@@ -70,7 +70,6 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
-    - assets/service-account.json
 
 
   # Flutter Launcher Icons configuration

@@ -76,7 +76,9 @@ class _BannerCarouselState extends State<BannerCarousel> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(2),
                   child: CachedNetworkImage(
-                    imageUrl: '${Strings.imageBaseUrl}${banner.imageUrl}',
+                    imageUrl: banner.imageUrl.startsWith('http')
+                        ? banner.imageUrl
+                        : '${Strings.imageBaseUrl}${banner.imageUrl}',
                     fit: BoxFit.fill,
                     placeholder: (context, url) => AppShimmer(
                       child: Container(

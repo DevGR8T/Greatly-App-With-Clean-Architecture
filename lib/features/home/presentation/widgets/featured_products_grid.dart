@@ -63,7 +63,9 @@ class FeaturedProductsGrid extends StatelessWidget {
         aspectRatio: 1.7,
         child: product.imageUrl.isNotEmpty
             ? CachedNetworkImage(
-                imageUrl: '${Strings.imageBaseUrl}${product.imageUrl}',
+                imageUrl: product.imageUrl.startsWith('http') 
+            ? product.imageUrl 
+            : '${Strings.imageBaseUrl}${product.imageUrl}',
                 fit: BoxFit.contain,
                 placeholder: (context, url) => AppShimmer(
                   child: Container(color: Colors.white),
